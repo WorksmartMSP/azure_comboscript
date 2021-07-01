@@ -93,7 +93,11 @@ $PasswordGoButton.Add_Click({
         $UserTextbox.Text = ""
         $PasswordTextBox.Text = ""
     }Catch{
-        WritePasswordRichTextBox("$($Error[0].Exception.Message)`rFAILURE:  Please review above and try again`r") -Color "Red"
+        $message = $_.Exception.Message
+        if ($_.Exception.ErrorContent.Message.Value) {
+            $message = $_.Exception.ErrorContent.Message.Value
+        }
+        WritePasswordRichTextBox("$message`rFAILURE:  Please review above and try again`r") -Color "Red"
         $PasswordRichTextBox.ScrollToEnd()
     }
 })
