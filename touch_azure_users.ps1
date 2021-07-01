@@ -90,6 +90,8 @@ $PasswordGoButton.Add_Click({
         Set-AzureADUserPassword -ObjectID $UserTextBox.Text -Password $securepassword -ForceChangePasswordNextLogin $false -ErrorAction Stop
         WritePasswordRichTextBox("SUCCESS:  $($UserTextBox.Text)'s password has been reset to $($PasswordTextBox.Text)`r")
         $PasswordRichTextBox.ScrollToEnd()
+        $UserTextbox.Text = ""
+        $PasswordTextBox.Text = ""
     }Catch{
         WritePasswordRichTextBox("$($Error[0].Exception.Message)`rFAILURE:  Please review above and try again`r") -Color "Red"
         $PasswordRichTextBox.ScrollToEnd()
