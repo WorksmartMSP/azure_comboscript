@@ -19,19 +19,43 @@ if(-not(Get-Module ExchangeOnlineManagement -ListAvailable)){
         <TabControl HorizontalAlignment="Left" Height="487" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
-                    <Label Content="Please Pick A User, Then Enter A Password, Go Button Activates Once Selected" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="473"/>
+                    <Label Content="Please Pick A User, Then Enter A Password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="473"/>
                     <TextBox Name="PasswordTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473"/>
                     <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False"/>
                     <TextBox Name="UserTextBox" HorizontalAlignment="Left" Height="23" Margin="258,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="UserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
-                    <Label Content="Enter Password Below, Go Button Activates At 8 Characters" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
+                    <Label Content="Enter Password Below, Go Button Activates At 8 Characters and User Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
                     <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="234" Margin="10,160,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Create User">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <Label Content="First Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="67"/>
+                    <TextBox Name="FirstNameTextbox" HorizontalAlignment="Left" Height="23" Margin="10,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="0"/>
+                    <Label Content="Last Name" HorizontalAlignment="Left" Margin="10,69,0,0" VerticalAlignment="Top" Width="67"/>
+                    <TextBox Name="LastNameTextbox" HorizontalAlignment="Left" Height="23" Margin="10,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="1"/>
+                    <Label Content="Username" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" Width="67"/>
+                    <TextBox Name="UsernameTextbox" HorizontalAlignment="Left" Height="23" Margin="10,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="2"/>
+                    <Label Content="@" HorizontalAlignment="Left" Margin="10,187,0,0" VerticalAlignment="Top" Width="67"/>
+                    <TextBox Name="CreatePasswordTextbox" HorizontalAlignment="Left" Height="23" Margin="10,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="4"/>
+                    <Label Content="Password" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="67"/>
+                    <ComboBox Name="DomainCombobox" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="168" TabIndex="3"/>
+                    <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,304,0,0" VerticalAlignment="Top" Width="91"/>
+                    <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,335,0,0" VerticalAlignment="Top" Width="168" TabIndex="5"/>
+                    <Label Content="City" HorizontalAlignment="Left" Margin="343,10,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="6"/>
+                    <Label Content="State" HorizontalAlignment="Left" Margin="343,69,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="6"/>
+                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,128,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
+                    <Label Content="--Once you have filled in&#xD;&#xA;the required details, click &#xD;&#xA;Create User.&#xD;&#xA;--You will be prompted&#xD;&#xA;for Licenses and Groups to &#xD;&#xA;add.&#xD;&#xA;--The button will&#xD;&#xA;activate when the left &#xD;&#xA;side is filled in, the right&#xD;&#xA;side is not required&#xD;&#xA;for all tenants." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,10,0,0" Height="203" Width="155"/>
+                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="87" Margin="10,362,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan">
+                        <FlowDocument/>
+                    </RichTextBox>
+                    <Button Content="Create User" HorizontalAlignment="Left" Margin="183,218,0,0" VerticalAlignment="Top" Width="155" Height="139" IsEnabled="False"/>
+                </Grid>
             </TabItem>
             <TabItem Header="Terminate User" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5"/>
