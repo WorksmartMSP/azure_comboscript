@@ -1,7 +1,17 @@
 Add-Type -AssemblyName PresentationFramework
 
+# Test For Modules
 if(-not(Get-Module ExchangeOnlineManagement -ListAvailable)){
-    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details https://worksmart.itglue.com/2503920/docs/7777752')
+    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details')
+    Exit
+}
+if(-not(Get-Module AzureAD -ListAvailable)){
+    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details')
+    Exit
+}
+
+if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
+    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details')
     Exit
 }
 
@@ -113,6 +123,11 @@ Function WritePasswordRichTextBox {
 
 }
 
+Try{
+    Get-AzureADUser -ErrorAction Stop
+}Catch{
+    Connect-AzureAD
+}
 
 ### Start Password Tab Functionality
 $PasswordTextBox.Add_TextChanged({
@@ -147,5 +162,20 @@ $PasswordGoButton.Add_Click({
     }
 })
 ### End Password Tab Functionality
+
+### Start User Creation Tab Functionality
+
+
+
+### End User Creation Tab Functionality
+
+### Start User Termination Tab Functionality
+
+
+
+### End User Termination Tab Functionality
+
+
+
 
 $null = $UserForm.ShowDialog()
