@@ -53,6 +53,7 @@ Catch{
 
 #Create Variables For Use In Script Automatically
 $xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name ($_.Name) -Value $UserForm.FindName($_.Name)}
+### End XAML and Variables from XAML
 
 # Create Functions For Color Changing Messages
 Function WritePasswordRichTextBox {
@@ -69,7 +70,7 @@ Function WritePasswordRichTextBox {
 }
 
 
-
+### Start Password Tab Functionality
 $PasswordTextBox.Add_TextChanged({
     if (($PasswordTextBox.Text.Length -ge 8) -and ($UserTextBox.Text.Length -ge 2)){
         $PasswordGoButton.IsEnabled = $true
@@ -101,5 +102,6 @@ $PasswordGoButton.Add_Click({
         $PasswordRichTextBox.ScrollToEnd()
     }
 })
+### End Password Tab Functionality
 
 $null = $UserForm.ShowDialog()
