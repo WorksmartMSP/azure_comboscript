@@ -13,19 +13,19 @@ if(-not(Get-Module ExchangeOnlineManagement -ListAvailable)){
 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
-  Title="Touch Users" Height="350" Width="525" ResizeMode="NoResize">
+  Title="Touch Users" Height="526.201" Width="525" ResizeMode="NoResize">
 
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-        <TabControl HorizontalAlignment="Left" Height="311" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
+        <TabControl HorizontalAlignment="Left" Height="487" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
                     <Label Content="Please Pick A User, Then Enter A Password, Go Button Activates Once Selected" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="473"/>
                     <TextBox Name="PasswordTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473"/>
-                    <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,223,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False"/>
+                    <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False"/>
                     <TextBox Name="UserTextBox" HorizontalAlignment="Left" Height="23" Margin="258,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="UserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
                     <Label Content="Enter Password Below, Go Button Activates At 8 Characters" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
-                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="58" Margin="10,160,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="234" Margin="10,160,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                 </Grid>
