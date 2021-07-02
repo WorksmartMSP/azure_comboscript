@@ -186,9 +186,9 @@ $PasswordGoButton.Add_Click({
 ### Start User Termination Tab Functionality
 #Test And Connect To Microsoft Exchange Online If Needed
 $RemoveGoButton.Add_Click({
-    Try {
+    Try{
         Get-Mailbox -ErrorAction Stop | Out-Null
-    }Catch {
+    }Catch{
         Connect-ExchangeOnline
     }
 
