@@ -16,18 +16,6 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
     Exit
 }
 
-Try{
-    Get-AzureADUser -ErrorAction Stop | Out-Null
-}Catch{
-    Connect-AzureAD
-}
-
-Try{
-    Get-Mailbox -ErrorAction Stop | Out-Null
-}Catch{
-    Connect-ExchangeOnline
-}
-
 ### Start XAML and Reader to use WPF, as well as declare variables for use
 [xml]$xaml = @"
 <Window
@@ -478,6 +466,11 @@ $CreateGoButton.Add_Click({
 
 ### Start User Termination Tab Functionality
 $RemoveGoButton.Add_Click({
+    Try{
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-ExchangeOnline
+    }
     #Pull All Azure AD Users and Store In Hash Table Instead Of Calling Get-AzureADUser Multiple Times
     Write-RemoveRichTextBox("Pulling Users To Store In a Hash Table")
     $allUsers = @{}    
@@ -608,6 +601,11 @@ $ShareMailboxCheckBox.Add_Unchecked({
 ### End User Termination Tab Functionality
 
 $UserForm.Add_Loaded({
+    Try{
+        Get-AzureADUser -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-AzureAD
+    }
     #Pull Data for Dropdown Menus on Create User Page
     foreach($UsageLocation in $UsageLocations.keys)
     {
