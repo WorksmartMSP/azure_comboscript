@@ -311,12 +311,12 @@ function MailboxExistCheck {
 
 #Verification Check to enable OK button on Create User Page
 function CheckAllBoxes{
-    if ( $passwordTextbox.Text.Length -and ($domainComboBox.SelectedIndex -ge 0) -and $usernameTextbox.Text.Length -and $firstnameTextbox.Text.Length -and $lastnameTextbox.Text.Length )
+    if ( $CreatePasswordTextbox.Text.Length -and ($domainComboBox.SelectedIndex -ge 0) -and $usernameTextbox.Text.Length -and $firstnameTextbox.Text.Length -and $lastnameTextbox.Text.Length )
     {
-        $okButton.Enabled = $true
+        $CreateGoButton.IsEnabled = $true
     }
     else {
-        $okButton.Enabled = $false
+        $CreateGoButton.IsEnabled = $false
     }
 }
 
@@ -355,9 +355,123 @@ $PasswordGoButton.Add_Click({
 ### End Password Tab Functionality
 
 ### Start User Creation Tab Functionality
+$firstnameTextbox.Add_TextChanged({
+    CheckAllBoxes
+})
+
+$lastnameTextbox.Add_TextChanged({
+    CheckAllBoxes
+})
+
+$usernameTextbox.Add_TextChanged({
+    CheckAllBoxes
+})
+
+$CreatePasswordTextbox.Add_TextChanged({
+    CheckAllBoxes
+})
+
+$DomainCombobox.Add_SelectionChanged({
+    CheckAllBoxes
+})
+
+$UsageLocationCombobox.Add_SelectionChanged({
+    CheckAllBoxes
+})
+
+
+
 
 $CreateGoButton.Add_Click({
+    $Licenses =  Get-AzureADSubscribedSku | Select-Object -Property Sku*,ConsumedUnits -ExpandProperty PrepaidUnits
+    foreach($License in $Licenses){
+        $TempSkuCheck = $skuToFriendly.Item("$($License.SkuID)")
+        if($TempSkuCheck)
+        {
+            $License.SkuPartNumber = $skuToFriendly.Item("$($License.SkuID)")
+        }
+        else
+        {
+            Write-CreateRichTextBox("Please Submit a Github Issue for Non-Matching SkuPartNumber $($License.SkuID) - $($License.SkuPartNumber) : https://github.com/mrobinson-ws/usercreation-azuread/issues`r") -Color "Yellow"
+        }
+    }
+    $SelectedLicenses = $Licenses | Sort-Object SkuPartNumber | Out-GridView -Passthru -Title "Hold Ctrl For Multiple Licenses"
+    foreach($SelectedLicense in $SelectedLicenses){
+        if($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -ge 1){
+            $Available = $SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits
+            Write-CreateRichTextBox("You have $Available available $($SelectedLicense.SkuPartNumber) licenses`r")
+            $AvailableLicenseCheck = $true
+        }
+        elseif($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -le 0){
+            Write-CreateRichTextBox("You do not have any $($SelectedLicense.SkuPartNumber) licenses to assign, please acquire licenses and try again`r")
+            $AvailableLicenseCheck = $false
+        }
+    }
     
+    if ($AvailableLicenseCheck -eq $true) {
+        $PasswordProfile = New-Object -TypeName Microsoft.Open.AzureAD.Model.PasswordProfile
+        $PasswordProfile.Password = $CreatePasswordTextbox.text
+        $UPN = $usernameTextbox.Text + "@" + $domainCombobox.Text
+        $displayname = $firstnameTextbox.text + " " + $lastnameTextbox.Text
+        $usageloc = $UsageLocations[$UsageLocationComboBox.Text]
+               
+        #Test if User with matching UPN already exists, then exits
+        try {
+            Write-CreateRichTextBox("Testing If Username Does Not Exist`r")
+            Get-AzureAdUSer -ObjectID $UPN -ErrorAction Stop | Out-Null
+            $UserExists = $true
+        }
+        #Otherwise, creates user and assigns licenses selected in first step
+        catch {
+            Write-CreateRichTextBox("Username Does Not Exist, Creating User and Assigning Licenses`r")
+            $UserExists = $false
+        }
+
+        if($UserExists -ne $true){
+            New-AzureADUser -DisplayName $displayname -PasswordProfile $PasswordProfile -UserPrincipalName $UPN -AccountEnabled $true -MailNickName "$($usernameTextbox.Text)" -UsageLocation $usageloc
+            foreach($SelectedLicense in $SelectedLicenses){
+                $AssignedLicense = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicense
+                $AssignedLicense.SkuID = $SelectedLicense.SkuID
+                $Licenses = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses 
+                $Licenses.AddLicenses = $AssignedLicense
+                Set-AzureADUserLicense -ObjectID $UPN -AssignedLicenses $Licenses
+            }
+        }
+        if([string]::IsNullOrwhiteSpace($cityTextbox.Text) -eq $false){
+            Set-AzureADUser -ObjectId $UPN -City $cityTextbox.Text
+        }
+        if([string]::IsNullOrWhiteSpace($stateTextbox.Text) -eq $false){
+            Set-AzureADUser -ObjectID $UPN -State $stateTextbox.Text
+        }
+        if([string]::IsNullOrWhiteSpace($CustomAttribute1Textbox.Text) -eq $false){
+            MailboxExistCheck          
+            Set-Mailbox $UPN -CustomAttribute1 $CustomAttribute1Textbox.Text
+            Write-CreateRichTextBox("Mailbox Exists, Added CustomAttribute1`r")
+        }
+    }
+
+    $user = Get-AzureADUser -ObjectID $UPN
+        MailboxExistCheck
+        Write-CreateRichTextBox("Mailbox Exists, Please Select Groups To Add")
+        $Groups = Get-AzureADMSGroup | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,ObjectId | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty ObjectId
+		if ($Groups){
+			foreach($group in $Groups){
+				Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
+			}
+            Write-CreateRichTextBox("Selected Groups Added`r")
+		}
+        else {
+            Write-CreateRichTextBox("Group Selection Cancelled`r") -Color "Yellow"
+        }
+    
+    Clear-Variable LicenseCheckTextBox.Text -ErrorAction SilentlyContinue
+    Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
+    Clear-Variable Licenses -ErrorAction SilentlyContinue
+    Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
+    Clear-Variable CustomAttribute1Textbox -ErrorAction SilentlyContinue
+    Clear-Variable cityTextbox -ErrorAction SilentlyContinue
+    Clear-Variable stateTextbox -ErrorAction SilentlyContinue
+
 })
 
 ### End User Creation Tab Functionality
