@@ -157,6 +157,8 @@ Function Set-Comboboxes {
         $null = $UsageLocationComboBox.Items.Add($usagelocation)
     }
     $UsageLocationComboBox.SelectedIndex = 0
+    
+    $domainComboBox.Items.Clear()
     foreach($domain in Get-AzureADDomain){
         $null = $domainComboBox.Items.add($domain.Name)
     }
@@ -347,9 +349,8 @@ $UserTextBox.Add_TextChanged({
 })
 
 $PasswordReconnectButton.Add_Click({
-    Disconnect-ExchangeOnline
-    Disconnect-SPOService
     Connect-AzureAD
+    Set-Comboboxes
 })
 
 $UserButton.Add_Click({
