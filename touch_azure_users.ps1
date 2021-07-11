@@ -151,6 +151,18 @@ Function Write-RemoveRichTextBox {
     $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
 }
 
+Function Set-Comboboxes {
+    foreach($UsageLocation in $UsageLocations.keys)
+    {
+        $null = $UsageLocationComboBox.Items.Add($usagelocation)
+    }
+    $UsageLocationComboBox.SelectedIndex = 0
+    foreach($domain in Get-AzureADDomain){
+        $null = $domainComboBox.Items.add($domain.Name)
+    }
+    $DomainComboBox.SelectedIndex = 0
+}
+
 # Friendly Name Lookup Table
 $SkuToFriendly = @{
     "c42b9cae-ea4f-4ab7-9717-81576235ccac" = "DevPack E5 (No Windows or Audio)"
@@ -632,15 +644,7 @@ $UserForm.Add_Loaded({
         Connect-AzureAD
     }
     #Pull Data for Dropdown Menus on Create User Page
-    foreach($UsageLocation in $UsageLocations.keys)
-    {
-        $null = $UsageLocationComboBox.Items.Add($usagelocation)
-    }
-    $UsageLocationComboBox.SelectedIndex = 0
-    foreach($domain in Get-AzureADDomain){
-        $null = $domainComboBox.Items.add($domain.Name)
-    }
-    $DomainComboBox.SelectedIndex = 0
+    Set-Comboboxes
 })
 
 $null = $UserForm.ShowDialog()
