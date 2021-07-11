@@ -57,21 +57,21 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <ComboBox Name="DomainCombobox" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="168" TabIndex="3"/>
                     <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,304,0,0" VerticalAlignment="Top" Width="91"/>
                     <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,335,0,0" VerticalAlignment="Top" Width="168" TabIndex="5"/>
-                    <Label Content="City" HorizontalAlignment="Left" Margin="343,69,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="7"/>
-                    <Label Content="State" HorizontalAlignment="Left" Margin="343,128,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
-                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,246,0,0" VerticalAlignment="Top" Width="107"/>
-                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,277,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
-                    <Label Content="--Once you have filled in&#xD;&#xA;the required details, click &#xD;&#xA;Create User.&#xD;&#xA;--You will be prompted&#xD;&#xA;for Licenses and Groups to &#xD;&#xA;add.&#xD;&#xA;--The button will&#xD;&#xA;activate when the left &#xD;&#xA;side is filled in, the right&#xD;&#xA;side is not required&#xD;&#xA;for all tenants." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,96,0,0" Height="203" Width="155"/>
+                    <Label Content="City" HorizontalAlignment="Left" Margin="343,41,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="7"/>
+                    <Label Content="State" HorizontalAlignment="Left" Margin="343,100,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
+                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,218,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,249,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
+                    <Label Content="--Once you have filled in&#xA;the required details, click &#xA;Create User.&#xA;&#xD;&#xA;--The button will&#xA;activate when the left is&#xD;&#xA;filled in, the right is not&#xD;&#xA;required for all tenants.&#xD;&#xA;&#xD;&#xA;--You will be prompted to &#xD;&#xA;connect to Exchange&#xD;&#xA;Online, then for Licenses&#xD;&#xA;and Groups to add." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,41,0,0" Height="230" Width="155"/>
                     <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,304,0,0" VerticalAlignment="Top" Width="300" Height="53" IsEnabled="False" TabIndex="12"/>
-                    <Label Content="Country" HorizontalAlignment="Left" Margin="343,187,0,0" VerticalAlignment="Top" TabIndex="9"/>
-                    <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,218,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
-                    <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="54"/>
-                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top"/>
+                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="300" Height="100" IsEnabled="False" TabIndex="11"/>
+                    <Label Content="Country" HorizontalAlignment="Left" Margin="343,159,0,0" VerticalAlignment="Top"/>
+                    <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="9"/>
+                    <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="26"/>
+                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top" TabIndex="6"/>
                 </Grid>
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
@@ -95,7 +95,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="194" Margin="10,198,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="RemovePasswordResetButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -349,6 +349,13 @@ $UserTextBox.Add_TextChanged({
 })
 
 $PasswordReconnectButton.Add_Click({
+    Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
+    Try{
+        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+    }
+    Catch{
+        #DoNothing
+    }
     Connect-AzureAD
     Set-Comboboxes
 })
@@ -406,6 +413,18 @@ $DomainCombobox.Add_SelectionChanged({
 
 $UsageLocationCombobox.Add_SelectionChanged({
     CheckAllBoxes
+})
+
+$CreateReconnectButton.Add_Click({
+    Try{
+        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+    }
+    Catch{
+        #DoNothing
+    }
+    Connect-AzureAD
+    Connect-ExchangeOnline -ShowBanner:$false
+    Set-Comboboxes
 })
 
 $CreateGoButton.Add_Click({
@@ -502,11 +521,20 @@ $CreateGoButton.Add_Click({
 ### End User Creation Tab Functionality
 
 ### Start User Termination Tab Functionality
+$TerminateReconnectButton.Add_Click({
+    Connect-AzureAD
+    Connect-ExchangeOnline -ShowBanner:$false
+    $domainPrefix = ((Get-AzureADDomain | Where-Object Name -match "\.onmicrosoft\.com")[0].Name -split '\.')[0]
+    $AdminSiteUrl = "https://$domainPrefix-admin.sharepoint.com"
+    Connect-SPOService -Url $AdminSiteURL
+    Set-Comboboxes
+})
+
 $RemoveGoButton.Add_Click({
     Try{
         Get-Mailbox -ErrorAction Stop | Out-Null
     }Catch{
-        Connect-ExchangeOnline
+        Connect-ExchangeOnline -ShowBanner:$false
     }
     #Pull All Azure AD Users and Store In Hash Table Instead Of Calling Get-AzureADUser Multiple Times
     $allUsers = @{}    
