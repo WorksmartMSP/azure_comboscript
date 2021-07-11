@@ -420,7 +420,7 @@ $CreateReconnectButton.Add_Click({
         Disconnect-SPOOnline -ErrorAction SilentlyContinue
     }
     Catch{
-        #DoNothing
+        #Do Nothing If Not Connected to SPO
     }
     Connect-AzureAD
     Connect-ExchangeOnline -ShowBanner:$false
@@ -437,21 +437,28 @@ $CreateGoButton.Add_Click({
         }
         else
         {
-            Write-CreateRichTextBox("Please Submit a Github Issue for Non-Matching SkuPartNumber $($License.SkuID) - $($License.SkuPartNumber) : https://github.com/mrobinson-ws/usercreation-azuread/issues`r") -Color "Yellow"        }
-    }
-    $SelectedLicenses = $Licenses | Sort-Object SkuPartNumber | Out-GridView -Passthru -Title "Hold Ctrl For Multiple Licenses"
-    foreach($SelectedLicense in $SelectedLicenses){
-        if($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -ge 1){
-            $Available = $SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits
-            Write-CreateRichTextBox("You have $Available available $($SelectedLicense.SkuPartNumber) licenses`r")
-            $AvailableLicenseCheck = $true
-        }
-        elseif($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -le 0){
-            Write-CreateRichTextBox("You do not have any $($SelectedLicense.SkuPartNumber) licenses to assign, please acquire licenses and try again`r")
-            $AvailableLicenseCheck = $false
+            $null = [System.Windows.MessageBox]::Show("Please Submit a Github Issue for Non-Matching SkuPartNumber $($License.SkuID) - $($License.SkuPartNumber): https://github.com/mrobinson-ws/touch_azure_users/issues")
         }
     }
-    
+    while($AvailableLicenseCheck -ne $true){
+        Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
+        $SelectedLicenses = $Licenses | Sort-Object SkuPartNumber | Out-GridView -Passthru -Title "Hold Ctrl For Multiple Licenses"
+        foreach($SelectedLicense in $SelectedLicenses){
+            if($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -ge 1){
+                $Available = $SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits
+                $null = [System.Windows.MessageBox]::Show("You have $Available available $($SelectedLicense.SkuPartNumber) licenses")
+                $AvailableLicenseCheck = $true
+            }
+            elseif($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -le 0){
+                $null = [System.Windows.MessageBox]::Show("You do not have any $($SelectedLicense.SkuPartNumber) licenses to assign, please acquire licenses and try again","License Check","OKCancel","Warning")
+                $AvailableLicenseCheck = $false
+            }
+        }
+        if(-not($SelectedLicenses)){
+            Break
+        }
+    }
+
     if ($AvailableLicenseCheck -eq $true) {
         $PasswordProfile = New-Object -TypeName Microsoft.Open.AzureAD.Model.PasswordProfile
         $PasswordProfile.Password = $CreatePasswordTextbox.text
