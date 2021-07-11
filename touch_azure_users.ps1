@@ -418,8 +418,7 @@ $CreateGoButton.Add_Click({
         }
         else
         {
-            Write-CreateRichTextBox("Please Submit a Github Issue for Non-Matching SkuPartNumber $($License.SkuID) - $($License.SkuPartNumber) : https://github.com/mrobinson-ws/usercreation-azuread/issues`r") -Color "Yellow"
-        }
+            Write-CreateRichTextBox("Please Submit a Github Issue for Non-Matching SkuPartNumber $($License.SkuID) - $($License.SkuPartNumber) : https://github.com/mrobinson-ws/usercreation-azuread/issues`r") -Color "Yellow"        }
     }
     $SelectedLicenses = $Licenses | Sort-Object SkuPartNumber | Out-GridView -Passthru -Title "Hold Ctrl For Multiple Licenses"
     foreach($SelectedLicense in $SelectedLicenses){
@@ -490,13 +489,13 @@ $CreateGoButton.Add_Click({
         Write-CreateRichTextBox("Group Selection Cancelled`r") -Color "Yellow"
     }
     
-    Clear-Variable LicenseCheckTextBox.Text -ErrorAction SilentlyContinue
-    Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
-    Clear-Variable Licenses -ErrorAction SilentlyContinue
-    Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
-    Clear-Variable CustomAttribute1Textbox -ErrorAction SilentlyContinue
-    Clear-Variable cityTextbox -ErrorAction SilentlyContinue
-    Clear-Variable stateTextbox -ErrorAction SilentlyContinue
+    $LicenseCheckTextBox.Text = ""
+    $AvailableLicenseCheck.Text = ""
+    $Licenses.Text = ""
+    $SelectedLicenses.Text = ""
+    $CustomAttribute1Textbox.Text = ""
+    $cityTextbox.Text = ""
+    $stateTextbox.Text = ""
 
 })
 
@@ -510,11 +509,9 @@ $RemoveGoButton.Add_Click({
         Connect-ExchangeOnline
     }
     #Pull All Azure AD Users and Store In Hash Table Instead Of Calling Get-AzureADUser Multiple Times
-    Write-RemoveRichTextBox("Pulling Users To Store In a Hash Table")
     $allUsers = @{}    
     foreach ($user in Get-AzureADUser -All $true){ $allUsers[$user.UserPrincipalName] = $user }
-    Write-RemoveRichTextBox("Hash Table Filled")
-
+    
     #Request Username(s) To Be Terminated From Script Runner (Hold Ctrl To Select Multiples)
     $usernames = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-Gridview -Passthru -Title "Please select the user(s) to be terminated" | Select-Object -ExpandProperty UserPrincipalName
     
@@ -532,12 +529,11 @@ $RemoveGoButton.Add_Click({
     Write-RemoveRichTextBox("Sign in Blocked for $($UserInfo.ObjectID)")
 
     #Remove All Group Memberships
-    Write-RemoveRichTextBox("Removing all group memberships, skipping Dynamic groups as they cannot be removed this way")
     $memberships = Get-AzureADUserMembership -ObjectId $username | Where-Object {$_.ObjectType -ne "Role"}| Select-Object DisplayName,ObjectId
     foreach ($membership in $memberships) { 
             $group = Get-AzureADMSGroup -ID $membership.ObjectId
             if ($group.GroupTypes -contains 'DynamicMembership') {
-                Write-RemoveRichTextBox("Skipping $($group.Displayname) as it is dynamic")
+                Write-RemoveRichTextBox("Skipped $($group.Displayname) as it is dynamic")
             }
             else{
                 Try{
@@ -551,7 +547,6 @@ $RemoveGoButton.Add_Click({
 
     #Convert To Shared Mailbox And Hide From GAL When Convert Is Selected, Must Be Done Before Removing Licenses
     if ($ConvertCheckBox.Checked -eq $true) {
-        Write-RemoveRichTextBox("Converting $username to Shared Mailbox and Hiding from GAL")
         Set-Mailbox $username -Type Shared -HiddenFromAddressListsEnabled $true
         Write-RemoveRichTextBox("Mailbox for $username converted to Shared, address hidden from GAL")
     }
@@ -633,9 +628,6 @@ $ShareMailboxCheckBox.Add_Unchecked({
     $OneDriveSameRadioButton.IsEnabled = $false
     $OneDriveNoRadioButton.IsChecked = $true
 })
-
-
-
 ### End User Termination Tab Functionality
 
 $UserForm.Add_Loaded({
@@ -644,7 +636,7 @@ $UserForm.Add_Loaded({
     }Catch{
         Connect-AzureAD
     }
-    #Pull Data for Dropdown Menus on Create User Page
+    
     Set-Comboboxes
 })
 
