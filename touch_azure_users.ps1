@@ -30,15 +30,17 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
         <TabControl Name="Tabs" HorizontalAlignment="Left" Height="487" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Name="ResetTab" Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
-                    <Label Content="Please Pick A User, Then Enter A Password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="473"/>
-                    <TextBox Name="PasswordTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473"/>
-                    <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False"/>
+                    <Label Content="Please Pick A User, Then Enter A Password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="243"/>
+                    <TextBox Name="PasswordTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" TabIndex="1"/>
+                    <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False" TabIndex="0"/>
                     <TextBox Name="UserTextBox" HorizontalAlignment="Left" Height="23" Margin="258,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="UserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
                     <Label Content="Enter Password Below, Go Button Activates At 8 Characters and User Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
-                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="234" Margin="10,160,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
+                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="214" Margin="10,180,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
+                    <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="461"/>
+                    <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
@@ -55,30 +57,34 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <ComboBox Name="DomainCombobox" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="168" TabIndex="3"/>
                     <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,304,0,0" VerticalAlignment="Top" Width="91"/>
                     <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,335,0,0" VerticalAlignment="Top" Width="168" TabIndex="5"/>
-                    <Label Content="City" HorizontalAlignment="Left" Margin="343,10,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="6"/>
-                    <Label Content="State" HorizontalAlignment="Left" Margin="343,69,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="6"/>
-                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,128,0,0" VerticalAlignment="Top" Width="107"/>
-                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
-                    <Label Content="--Once you have filled in&#xD;&#xA;the required details, click &#xD;&#xA;Create User.&#xD;&#xA;--You will be prompted&#xD;&#xA;for Licenses and Groups to &#xD;&#xA;add.&#xD;&#xA;--The button will&#xD;&#xA;activate when the left &#xD;&#xA;side is filled in, the right&#xD;&#xA;side is not required&#xD;&#xA;for all tenants." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,10,0,0" Height="203" Width="155"/>
-                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="87" Margin="10,362,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True">
+                    <Label Content="City" HorizontalAlignment="Left" Margin="343,69,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="7"/>
+                    <Label Content="State" HorizontalAlignment="Left" Margin="343,128,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
+                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,246,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,277,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
+                    <Label Content="--Once you have filled in&#xD;&#xA;the required details, click &#xD;&#xA;Create User.&#xD;&#xA;--You will be prompted&#xD;&#xA;for Licenses and Groups to &#xD;&#xA;add.&#xD;&#xA;--The button will&#xD;&#xA;activate when the left &#xD;&#xA;side is filled in, the right&#xD;&#xA;side is not required&#xD;&#xA;for all tenants." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,96,0,0" Height="203" Width="155"/>
+                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,218,0,0" VerticalAlignment="Top" Width="155" Height="139" IsEnabled="False" TabIndex="12"/>
+                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,304,0,0" VerticalAlignment="Top" Width="300" Height="53" IsEnabled="False" TabIndex="12"/>
+                    <Label Content="Country" HorizontalAlignment="Left" Margin="343,187,0,0" VerticalAlignment="Top" TabIndex="9"/>
+                    <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,218,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
+                    <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="54"/>
+                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
                 <Grid Background="#FFE5E5E5">
-                    <Label Content="Please Select Options Below for User Termination and press Terminate User.  You will&#xD;&#xA;be prompted to select a user and who to share to." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="43"/>
-                    <GroupBox Header="Share OneDrive?" HorizontalAlignment="Left" Height="80" Margin="243,67,0,0" VerticalAlignment="Top" Width="240">
+                    <Label Content="Please Select Options Below for User Termination and press Terminate User.  You will&#xD;&#xA;be prompted to select a user and who to share to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="43"/>
+                    <GroupBox Header="Share OneDrive?" HorizontalAlignment="Left" Height="80" Margin="243,113,0,0" VerticalAlignment="Top" Width="240">
                         <StackPanel HorizontalAlignment="Left" Height="74" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="281">
                             <RadioButton Name="OneDriveNoRadioButton" Content="No" TabIndex="3"/>
                             <RadioButton Name="OneDriveSameRadioButton" Content="To Same User As Shared Mailbox" IsChecked="True" TabIndex="4"/>
                             <RadioButton Name="OneDriveDifferentRadioButton" Content="To Different User As Shared Mailbox" TabIndex="5"/>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Standard Options" HorizontalAlignment="Left" Height="80" Margin="10,67,0,0" VerticalAlignment="Top" Width="228">
+                    <GroupBox Header="Standard Options" HorizontalAlignment="Left" Height="80" Margin="10,113,0,0" VerticalAlignment="Top" Width="228">
                         <StackPanel HorizontalAlignment="Left" Height="74" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="208">
                             <CheckBox Name="ConvertCheckbox" Content="Convert to Shared Mailbox?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="0"/>
                             <CheckBox Name="RemoveLicensesCheckbox" Content="Remove All Licenses?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="1"/>
@@ -86,9 +92,10 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         </StackPanel>
                     </GroupBox>
                     <Button Name="RemoveGoButton" Content="Terminate User" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="473" Height="52"/>
-                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="240" Margin="10,152,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464">
+                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="194" Margin="10,198,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464">
                         <FlowDocument/>
                     </RichTextBox>
+                    <Button Name="RemovePasswordResetButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -290,7 +297,7 @@ function MailboxExistCheck {
             $MailboxExistsCheck = "YES"
         }
         catch {
-            Write-CreateRichTextBox("Mailbox Does Not Exist, Waiting 60 Seconds and Trying Again") -Color "Yellow"
+            $null = [System.Windows.MessageBox]::Show("Mailbox Does Not Exist, Waiting 60 Seconds and Trying Again")
             Start-Sleep -Seconds 60
             $MailboxExistsCheck = "NO"
         }
@@ -318,6 +325,21 @@ $PasswordTextBox.Add_TextChanged({
     }
 })
 
+$UserTextBox.Add_TextChanged({
+    if (($PasswordTextBox.Text.Length -ge 8) -and ($UserTextBox.Text.Length -ge 2)){
+        $PasswordGoButton.IsEnabled = $true
+    }
+    else{
+        $PasswordGoButton.IsEnabled = $false
+    }
+})
+
+$PasswordReconnectButton.Add_Click({
+    Disconnect-ExchangeOnline
+    Disconnect-SPOService
+    Connect-AzureAD
+})
+
 $UserButton.Add_Click({
     $tempuser = Get-AzureADUser -all $true | Out-GridView -Outputmode Single
     $UserTextBox.Text = $tempuser.UserPrincipalName
@@ -326,7 +348,13 @@ $UserButton.Add_Click({
 $PasswordGoButton.Add_Click({
     $securepassword = ConvertTo-SecureString -String $PasswordTextBox.Text -AsPlainText -Force
     Try{
-        Set-AzureADUserPassword -ObjectID $UserTextBox.Text -Password $securepassword -ForceChangePasswordNextLogin $false -ErrorAction Stop
+        if($PasswordResetCheckbox.IsChecked -eq $true){
+            Set-AzureADUserPassword -ObjectID $UserTextBox.Text -Password $securepassword -ForceChangePasswordNextLogin $true -ErrorAction Stop
+        }
+        else{
+            Set-AzureADUserPassword -ObjectID $UserTextBox.Text -Password $securepassword -ForceChangePasswordNextLogin $false -ErrorAction Stop
+        }
+
         Write-PasswordRichTextBox("SUCCESS:  $($UserTextBox.Text)'s password has been reset to $($PasswordTextBox.Text)`r")
         $PasswordRichTextBox.ScrollToEnd()
         $UserTextbox.Text = ""
@@ -366,9 +394,6 @@ $DomainCombobox.Add_SelectionChanged({
 $UsageLocationCombobox.Add_SelectionChanged({
     CheckAllBoxes
 })
-
-
-
 
 $CreateGoButton.Add_Click({
     $Licenses =  Get-AzureADSubscribedSku | Select-Object -Property Sku*,ConsumedUnits -ExpandProperty PrepaidUnits
@@ -439,18 +464,18 @@ $CreateGoButton.Add_Click({
     }
 
     $user = Get-AzureADUser -ObjectID $UPN
-        MailboxExistCheck
-        Write-CreateRichTextBox("Mailbox Exists, Please Select Groups To Add`r")
-        $Groups = Get-AzureADMSGroup | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,ObjectId | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty ObjectId
-		if ($Groups){
-			foreach($group in $Groups){
-				Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
-			}
-            Write-CreateRichTextBox("Selected Groups Added`r")
-		}
-        else {
-            Write-CreateRichTextBox("Group Selection Cancelled`r") -Color "Yellow"
+    MailboxExistCheck
+    Write-CreateRichTextBox("Mailbox Exists, Please Select Groups To Add`r")
+    $Groups = Get-AzureADMSGroup | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,ObjectId | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty ObjectId
+    if ($Groups){
+        foreach($group in $Groups){
+            Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
         }
+        Write-CreateRichTextBox("Selected Groups Added`r")
+    }
+    else {
+        Write-CreateRichTextBox("Group Selection Cancelled`r") -Color "Yellow"
+    }
     
     Clear-Variable LicenseCheckTextBox.Text -ErrorAction SilentlyContinue
     Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
