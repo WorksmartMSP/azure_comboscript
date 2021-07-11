@@ -303,11 +303,14 @@ $UsageLocations=@{
 
 #Function to Check If Mailbox Exists Before Touching It
 function MailboxExistCheck {
+    Param(
+            [string]$user
+        )
     Clear-Variable MailboxExistsCheck -ErrorAction SilentlyContinue
     #Start Mailbox Check Wait Loop
     while ($MailboxExistsCheck -ne "YES") {
         try {
-            Get-Mailbox $UPN -ErrorAction Stop
+            Get-Mailbox $user -ErrorAction Stop
             $MailboxExistsCheck = "YES"
         }
         catch {
@@ -428,15 +431,19 @@ $CreateReconnectButton.Add_Click({
 })
 
 $CreateGoButton.Add_Click({
+    Try{
+        Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
+    }
+    Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
     $Licenses =  Get-AzureADSubscribedSku | Select-Object -Property Sku*,ConsumedUnits -ExpandProperty PrepaidUnits
     foreach($License in $Licenses){
         $TempSkuCheck = $skuToFriendly.Item("$($License.SkuID)")
-        if($TempSkuCheck)
-        {
+        if($TempSkuCheck){
             $License.SkuPartNumber = $skuToFriendly.Item("$($License.SkuID)")
         }
-        else
-        {
+        else{
             $null = [System.Windows.MessageBox]::Show("Please Submit a Github Issue for Non-Matching SkuPartNumber $($License.SkuID) - $($License.SkuPartNumber): https://github.com/mrobinson-ws/touch_azure_users/issues")
         }
     }
@@ -494,27 +501,27 @@ $CreateGoButton.Add_Click({
         if([string]::IsNullOrWhiteSpace($stateTextbox.Text) -eq $false){
             Set-AzureADUser -ObjectID $UPN -State $stateTextbox.Text
         }
+        if([string]::IsNullOrWhiteSpace($countryTextbox.Text) -eq $false){
+            Set-AzureADUser -ObjectID $UPN -State $countryTextbox.Text
+        }
         if([string]::IsNullOrWhiteSpace($CustomAttribute1Textbox.Text) -eq $false){
-            MailboxExistCheck          
+            MailboxExistCheck($UPN)
             Set-Mailbox $UPN -CustomAttribute1 $CustomAttribute1Textbox.Text
-            Write-CreateRichTextBox("Mailbox Exists, Added CustomAttribute1`r")
         }
-    }
-
-    $user = Get-AzureADUser -ObjectID $UPN
-    MailboxExistCheck
-    Write-CreateRichTextBox("Mailbox Exists, Please Select Groups To Add`r")
-    $Groups = Get-AzureADMSGroup | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,ObjectId | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty ObjectId
-    if ($Groups){
-        foreach($group in $Groups){
-            Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
-        }
-        Write-CreateRichTextBox("Selected Groups Added`r")
-    }
-    else {
-        Write-CreateRichTextBox("Group Selection Cancelled`r") -Color "Yellow"
-    }
     
+        $user = Get-AzureADUser -ObjectID $UPN
+        MailboxExistCheck($UPN)
+        $Groups = Get-AzureADMSGroup | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,ObjectId | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty ObjectId
+        if ($Groups){
+            foreach($group in $Groups){
+                Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
+            }
+            Write-CreateRichTextBox("Selected Groups Added`r")
+        }
+        else {
+            Write-CreateRichTextBox("No Groups Selected`r") -Color "Yellow"
+        }
+    }
     $LicenseCheckTextBox.Text = ""
     $AvailableLicenseCheck.Text = ""
     $Licenses.Text = ""
