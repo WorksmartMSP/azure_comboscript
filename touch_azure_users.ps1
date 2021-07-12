@@ -357,7 +357,7 @@ $PasswordReconnectButton.Add_Click({
         Disconnect-SPOOnline -ErrorAction SilentlyContinue
     }
     Catch{
-        #DoNothing
+        #Do Nothing If Not Connected to SPO, Not Needed For Password Reset
     }
     Connect-AzureAD
     Set-Comboboxes
@@ -423,7 +423,7 @@ $CreateReconnectButton.Add_Click({
         Disconnect-SPOOnline -ErrorAction SilentlyContinue
     }
     Catch{
-        #Do Nothing If Not Connected to SPO
+        #Do Nothing If Not Connected to SPO, Not Needed For Creation
     }
     Connect-AzureAD
     Connect-ExchangeOnline -ShowBanner:$false
