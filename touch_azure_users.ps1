@@ -431,6 +431,7 @@ $CreateReconnectButton.Add_Click({
 })
 
 $CreateGoButton.Add_Click({
+    Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
     Try{
         Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
     }
@@ -511,27 +512,31 @@ $CreateGoButton.Add_Click({
     
         $user = Get-AzureADUser -ObjectID $UPN
         MailboxExistCheck($UPN)
-        $Groups = Get-AzureADMSGroup | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,ObjectId | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty ObjectId
+        $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty Id
         if ($Groups){
             foreach($group in $Groups){
                 Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
+                Write-CreateRichTextBox("Added $($user.DisplayName) to $($group.Displayname)`r")
             }
-            Write-CreateRichTextBox("Selected Groups Added`r")
+            
         }
         else {
             Write-CreateRichTextBox("No Groups Selected`r") -Color "Yellow"
         }
+        Clear-Variable Licenses -ErrorAction SilentlyContinue
+        Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
+        Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
+        Clear-Variable Groups -ErrorAction SilentlyContinue
+        $CustomAttribute1Textbox.Text = ""
+        $cityTextbox.Text = ""
+        $stateTextbox.Text = ""
+        $countryTextBox.Text = ""
+        $firstnameTextbox.Text = ""
+        $lastnameTextbox.Text = ""
+        $usernameTextbox.Text = ""
+        $CreatePasswordTextbox.Text = ""
     }
-    $LicenseCheckTextBox.Text = ""
-    $AvailableLicenseCheck.Text = ""
-    $Licenses.Text = ""
-    $SelectedLicenses.Text = ""
-    $CustomAttribute1Textbox.Text = ""
-    $cityTextbox.Text = ""
-    $stateTextbox.Text = ""
-
 })
-
 ### End User Creation Tab Functionality
 
 ### Start User Termination Tab Functionality
