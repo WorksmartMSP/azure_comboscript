@@ -495,47 +495,52 @@ $CreateGoButton.Add_Click({
                 $Licenses.AddLicenses = $AssignedLicense
                 Set-AzureADUserLicense -ObjectID $UPN -AssignedLicenses $Licenses
             }
-        }
-        if([string]::IsNullOrwhiteSpace($cityTextbox.Text) -eq $false){
-            Set-AzureADUser -ObjectId $UPN -City $cityTextbox.Text
-        }
-        if([string]::IsNullOrWhiteSpace($stateTextbox.Text) -eq $false){
-            Set-AzureADUser -ObjectID $UPN -State $stateTextbox.Text
-        }
-        if([string]::IsNullOrWhiteSpace($countryTextbox.Text) -eq $false){
-            Set-AzureADUser -ObjectID $UPN -State $countryTextbox.Text
-        }
-        if([string]::IsNullOrWhiteSpace($CustomAttribute1Textbox.Text) -eq $false){
-            MailboxExistCheck($UPN)
-            Set-Mailbox $UPN -CustomAttribute1 $CustomAttribute1Textbox.Text
-        }
-    
-        $user = Get-AzureADUser -ObjectID $UPN
-        MailboxExistCheck($UPN)
-        $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty Id
-        if ($Groups){
-            foreach($group in $Groups){
-                Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
-                Write-CreateRichTextBox("Added $($user.DisplayName) to $($group.Displayname)`r")
+            if([string]::IsNullOrwhiteSpace($cityTextbox.Text) -eq $false){
+                Set-AzureADUser -ObjectId $UPN -City $cityTextbox.Text
             }
-            
+            if([string]::IsNullOrWhiteSpace($stateTextbox.Text) -eq $false){
+                Set-AzureADUser -ObjectID $UPN -State $stateTextbox.Text
+            }
+            if([string]::IsNullOrWhiteSpace($countryTextbox.Text) -eq $false){
+                Set-AzureADUser -ObjectID $UPN -State $countryTextbox.Text
+            }
+            if([string]::IsNullOrWhiteSpace($CustomAttribute1Textbox.Text) -eq $false){
+                MailboxExistCheck($UPN)
+                Set-Mailbox $UPN -CustomAttribute1 $CustomAttribute1Textbox.Text
+            }
+        
+            $user = Get-AzureADUser -ObjectID $UPN
+            MailboxExistCheck($UPN)
+            $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -ExpandProperty Id
+            if ($Groups){
+                foreach($group in $Groups){
+                    Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
+                    Write-CreateRichTextBox("Added $($user.DisplayName) to $($group.Displayname)`r")
+                }
+                
+            }
+            else {
+                Write-CreateRichTextBox("No Groups Selected`r") -Color "Yellow"
+            }
+            $CustomAttribute1Textbox.Text = ""
+            $cityTextbox.Text = ""
+            $stateTextbox.Text = ""
+            $countryTextBox.Text = ""
+            $firstnameTextbox.Text = ""
+            $lastnameTextbox.Text = ""
+            $usernameTextbox.Text = ""
+            $CreatePasswordTextbox.Text = ""
         }
-        else {
-            Write-CreateRichTextBox("No Groups Selected`r") -Color "Yellow"
+        Else{
+            $ExistingUser = Get-AzureADUser -ObjectID $UPN
+            Write-CreateRichTextBox("Username $UPN Exists as $($ExistingUser.DisplayName), Please Review and Try Again`r") -Color "Red"
         }
-        Clear-Variable Licenses -ErrorAction SilentlyContinue
-        Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
-        Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
-        Clear-Variable Groups -ErrorAction SilentlyContinue
-        $CustomAttribute1Textbox.Text = ""
-        $cityTextbox.Text = ""
-        $stateTextbox.Text = ""
-        $countryTextBox.Text = ""
-        $firstnameTextbox.Text = ""
-        $lastnameTextbox.Text = ""
-        $usernameTextbox.Text = ""
-        $CreatePasswordTextbox.Text = ""
     }
+Clear-Variable Licenses -ErrorAction SilentlyContinue
+Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
+Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
+Clear-Variable Groups -ErrorAction SilentlyContinue
+Clear-Variable UserExists -ErrorAction SilentlyContinue
 })
 ### End User Creation Tab Functionality
 
