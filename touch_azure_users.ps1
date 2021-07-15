@@ -579,52 +579,52 @@ $RemoveGoButton.Add_Click({
 
         #Block Sign In Of User/Force Sign Out Within 60 Minutes
         Set-AzureADUser -ObjectID $UserInfo.ObjectId -AccountEnabled $false
-        Write-RemoveRichTextBox("Sign in Blocked for $($UserInfo.ObjectID)")
+        Write-RemoveRichTextBox("Sign in Blocked for $($UserInfo.ObjectID)`r")
 
         #Remove All Group Memberships
         $memberships = Get-AzureADUserMembership -ObjectId $username | Where-Object {$_.ObjectType -ne "Role"}| Select-Object DisplayName,ObjectId
         foreach ($membership in $memberships) { 
                 $group = Get-AzureADMSGroup -ID $membership.ObjectId
                 if ($group.GroupTypes -contains 'DynamicMembership') {
-                    Write-RemoveRichTextBox("Skipped $($group.Displayname) as it is dynamic")
+                    Write-RemoveRichTextBox("Skipped $($group.Displayname) as it is dynamic`r") -Color "Yellow"
                 }
                 else{
                     Try{
                         Remove-AzureADGroupMember -ObjectId $membership.ObjectId -MemberId $UserInfo.ObjectId -ErrorAction Stop
                     }Catch{
-                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $_.Message") -color "Yellow"
+                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $_.Message`r") -color "Yellow"
                     }
                 }
             }
-        Write-RemoveRichTextBox("All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination")
+        Write-RemoveRichTextBox("All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination`r")
 
         #Convert To Shared Mailbox And Hide From GAL When Convert Is Selected, Must Be Done Before Removing Licenses
-        if ($ConvertCheckBox.Checked -eq $true) {
+        if ($ConvertCheckBox.IsChecked -eq $true) {
             Set-Mailbox $username -Type Shared -HiddenFromAddressListsEnabled $true
-            Write-RemoveRichTextBox("Mailbox for $username converted to Shared, address hidden from GAL")
+            Write-RemoveRichTextBox("Mailbox for $username converted to Shared, address hidden from GAL`r")
         }
 
         #Grant Access To Shared Mailbox When Grant CheckBox Is Selected
-        if ($ShareMailboxCheckBox.Checked -eq $true) {
+        if ($ShareMailboxCheckBox.IsChecked -eq $true) {
             $sharedMailboxUser = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user(s) to share the $username Shared Mailbox with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
             if($sharedMailboxUser){
                Add-MailboxPermission -Identity $username -User $SharedMailboxUser -AccessRights FullAccess -InheritanceType All
                 Add-RecipientPermission -Identity $username -Trustee $SharedMailboxUser -AccessRights SendAs -Confirm:$False
-                Write-RemoveRichTextBox("Access granted to the $username Shared Mailbox to $sharedMailboxUser")
+                Write-RemoveRichTextBox("Access granted to the $username Shared Mailbox to $sharedMailboxUser`r")
             }
             else{
-                Write-RemoveRichTextBox("Cancelled Sharing of Mailbox")
+                Write-RemoveRichTextBox("Cancelled Sharing of Mailbox`r") -Color "Red"
             }
         }
 
         #Remove All Licenses When Remove Licenses Is Selected
-        if ($RemoveLicensesCheckBox.Checked -eq $true) {
+        if ($RemoveLicensesCheckBox.IsChecked -eq $true) {
             $licenses = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
             if($UserInfo.assignedlicenses){
                 $licenses.RemoveLicenses = $UserInfo.assignedlicenses.SkuId
                 Set-AzureADUserLicense -ObjectId $UserInfo.ObjectId -AssignedLicenses $licenses
             }
-            Write-RemoveRichTextBox("All licenses have been removed")
+            Write-RemoveRichTextBox("All licenses have been removed`r")
         }
 
         #Test And Connect To Sharepoint Online If Needed
@@ -645,7 +645,7 @@ $RemoveGoButton.Add_Click({
 
             #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
             Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
-            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL")
+            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r")
         }
         #Share OneDrive With Different User(s) than Shared Mailbox
         elseif ($OneDriveDifferentRadioButton.IsChecked -eq $true) {
@@ -656,7 +656,7 @@ $RemoveGoButton.Add_Click({
 
             #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
             Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
-            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL")
+            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r")
         }
 
         #Export Groups Removed and OneDrive URL to CSV
