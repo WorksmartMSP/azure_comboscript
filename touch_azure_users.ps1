@@ -556,111 +556,118 @@ $TerminateReconnectButton.Add_Click({
 
 $RemoveGoButton.Add_Click({
     Try{
+        Get-AzureADUser -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-AzureAD
+    }
+    Try{
         Get-Mailbox -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
+    
     #Pull All Azure AD Users and Store In Hash Table Instead Of Calling Get-AzureADUser Multiple Times
     $allUsers = @{}    
     foreach ($user in Get-AzureADUser -All $true){ $allUsers[$user.UserPrincipalName] = $user }
     
     #Request Username(s) To Be Terminated From Script Runner (Hold Ctrl To Select Multiples)
-    $usernames = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-Gridview -Passthru -Title "Please select the user(s) to be terminated" | Select-Object -ExpandProperty UserPrincipalName
+    $username = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-Gridview -OutputMode Single -Title "Please select the user(s) to be terminated" | Select-Object -ExpandProperty UserPrincipalName
     
     ##### Start User(s) Loop #####
-    foreach ($username in $usernames) {
+    if($username){
         $UserInfo = $allusers[$username]
-        #Request User(s) To Share Mailbox With When Grant Access Is Selected
-        if ($GrantMailboxCheckBox.Checked -eq $true) {
-            $sharedMailboxUser = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user(s) to share the $username Shared Mailbox with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
-        }
-    }
-    
-    #Block Sign In Of User/Force Sign Out Within 60 Minutes
-    Set-AzureADUser -ObjectID $UserInfo.ObjectId -AccountEnabled $false
-    Write-RemoveRichTextBox("Sign in Blocked for $($UserInfo.ObjectID)")
 
-    #Remove All Group Memberships
-    $memberships = Get-AzureADUserMembership -ObjectId $username | Where-Object {$_.ObjectType -ne "Role"}| Select-Object DisplayName,ObjectId
-    foreach ($membership in $memberships) { 
-            $group = Get-AzureADMSGroup -ID $membership.ObjectId
-            if ($group.GroupTypes -contains 'DynamicMembership') {
-                Write-RemoveRichTextBox("Skipped $($group.Displayname) as it is dynamic")
-            }
-            else{
-                Try{
-                    Remove-AzureADGroupMember -ObjectId $membership.ObjectId -MemberId $UserInfo.ObjectId -ErrorAction Stop
-                }Catch{
-                    Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $_.Message") -color "Yellow"
+        #Block Sign In Of User/Force Sign Out Within 60 Minutes
+        Set-AzureADUser -ObjectID $UserInfo.ObjectId -AccountEnabled $false
+        Write-RemoveRichTextBox("Sign in Blocked for $($UserInfo.ObjectID)")
+
+        #Remove All Group Memberships
+        $memberships = Get-AzureADUserMembership -ObjectId $username | Where-Object {$_.ObjectType -ne "Role"}| Select-Object DisplayName,ObjectId
+        foreach ($membership in $memberships) { 
+                $group = Get-AzureADMSGroup -ID $membership.ObjectId
+                if ($group.GroupTypes -contains 'DynamicMembership') {
+                    Write-RemoveRichTextBox("Skipped $($group.Displayname) as it is dynamic")
+                }
+                else{
+                    Try{
+                        Remove-AzureADGroupMember -ObjectId $membership.ObjectId -MemberId $UserInfo.ObjectId -ErrorAction Stop
+                    }Catch{
+                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $_.Message") -color "Yellow"
+                    }
                 }
             }
+        Write-RemoveRichTextBox("All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination")
+
+        #Convert To Shared Mailbox And Hide From GAL When Convert Is Selected, Must Be Done Before Removing Licenses
+        if ($ConvertCheckBox.Checked -eq $true) {
+            Set-Mailbox $username -Type Shared -HiddenFromAddressListsEnabled $true
+            Write-RemoveRichTextBox("Mailbox for $username converted to Shared, address hidden from GAL")
         }
-    Write-RemoveRichTextBox("All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination")
 
-    #Convert To Shared Mailbox And Hide From GAL When Convert Is Selected, Must Be Done Before Removing Licenses
-    if ($ConvertCheckBox.Checked -eq $true) {
-        Set-Mailbox $username -Type Shared -HiddenFromAddressListsEnabled $true
-        Write-RemoveRichTextBox("Mailbox for $username converted to Shared, address hidden from GAL")
-    }
-
-    #Grant Access To Shared Mailbox When Grant CheckBox Is Selected
-    if ($ShareMailboxCheckBox.Checked -eq $true) {
-        Add-MailboxPermission -Identity $username -User $SharedMailboxUser -AccessRights FullAccess -InheritanceType All
-        Add-RecipientPermission -Identity $username -Trustee $SharedMailboxUser -AccessRights SendAs -Confirm:$False
-        Write-RemoveRichTextBox("Access granted to the $username Shared Mailbox to $sharedMailboxUser")
-    }
-
-    #Remove All Licenses When Remove Licenses Is Selected
-    if ($RemoveLicensesCheckBox.Checked -eq $true) {
-        $licenses = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
-        if($UserInfo.assignedlicenses){
-            $licenses.RemoveLicenses = $UserInfo.assignedlicenses.SkuId
-            Set-AzureADUserLicense -ObjectId $UserInfo.ObjectId -AssignedLicenses $licenses
+        #Grant Access To Shared Mailbox When Grant CheckBox Is Selected
+        if ($ShareMailboxCheckBox.Checked -eq $true) {
+            $sharedMailboxUser = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user(s) to share the $username Shared Mailbox with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
+            if($sharedMailboxUser){
+               Add-MailboxPermission -Identity $username -User $SharedMailboxUser -AccessRights FullAccess -InheritanceType All
+                Add-RecipientPermission -Identity $username -Trustee $SharedMailboxUser -AccessRights SendAs -Confirm:$False
+                Write-RemoveRichTextBox("Access granted to the $username Shared Mailbox to $sharedMailboxUser")
+            }
+            else{
+                Write-RemoveRichTextBox("Cancelled Sharing of Mailbox")
+            }
         }
-        Write-RemoveRichTextBox("All licenses have been removed")
-    }
 
-    #Test And Connect To Sharepoint Online If Needed
-    if ($OneDriveNoRadioButton.IsChecked -ne $true) {
-        $domainPrefix = ((Get-AzureADDomain | Where-Object Name -match "\.onmicrosoft\.com")[0].Name -split '\.')[0]
-        $AdminSiteUrl = "https://$domainPrefix-admin.sharepoint.com"
-        Try{
-            Get-SPOSite -ErrorAction Stop | Out-Null
-        }Catch{
-            Connect-SPOService -Url $AdminSiteURL
+        #Remove All Licenses When Remove Licenses Is Selected
+        if ($RemoveLicensesCheckBox.Checked -eq $true) {
+            $licenses = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
+            if($UserInfo.assignedlicenses){
+                $licenses.RemoveLicenses = $UserInfo.assignedlicenses.SkuId
+                Set-AzureADUserLicense -ObjectId $UserInfo.ObjectId -AssignedLicenses $licenses
+            }
+            Write-RemoveRichTextBox("All licenses have been removed")
         }
+
+        #Test And Connect To Sharepoint Online If Needed
+        if ($OneDriveNoRadioButton.IsChecked -ne $true) {
+            $domainPrefix = ((Get-AzureADDomain | Where-Object Name -match "\.onmicrosoft\.com")[0].Name -split '\.')[0]
+            $AdminSiteUrl = "https://$domainPrefix-admin.sharepoint.com"
+            Try{
+                Get-SPOSite -ErrorAction Stop | Out-Null
+            }Catch{
+                Connect-SPOService -Url $AdminSiteURL
+            }
+        }
+
+        #Share OneDrive With Same User as Shared Mailbox
+        if ($OneDriveSameRadioButton.IsChecked -eq $true) {
+            #Pull OneDriveSiteURL Dynamically And Grant Access
+            $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
+
+            #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
+            Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
+            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL")
+        }
+        #Share OneDrive With Different User(s) than Shared Mailbox
+        elseif ($OneDriveDifferentRadioButton.IsChecked -eq $true) {
+            $SharedOneDriveUser = $allusers.Values | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
+            
+            #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
+            $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
+
+            #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
+            Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
+            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL")
+        }
+
+        #Export Groups Removed and OneDrive URL to CSV
+        [pscustomobject]@{
+            GroupsRemoved    = $memberships.DisplayName -join ','
+            OneDriveSiteURL = $OneDriveSiteURL
+        } | Export-Csv -Path c:\users\$env:USERNAME\Downloads\$(get-date -f yyyy-MM-dd)_info_on_$username.csv -NoTypeInformation
+
+        #Open Created CSV File At End Of Loop For Ease Of Copying OneDrive URL To Give
+        Start-Process c:\users\$env:USERNAME\Downloads\$(get-date -f yyyy-MM-dd)_info_on_$username.csv
     }
-
-    #Share OneDrive With Same User as Shared Mailbox
-    if ($OneDriveSameRadioButton.IsChecked -eq $true) {
-        #Pull OneDriveSiteURL Dynamically And Grant Access
-        $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
-
-        #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
-        Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
-        Write-RemoveRichTextBox("OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL")
-    }
-    #Share OneDrive With Different User(s) than Shared Mailbox
-    elseif ($OneDriveDifferentRadioButton.IsChecked -eq $true) {
-        $SharedOneDriveUser = $allusers.Values | Where-Object {$_.AccountEnabled } | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user(s) to share the Mailbox and OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
-        $SharedOneDriveUser = $allusers.Values | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
-        
-        #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
-        $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
-
-        #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
-        Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
-        Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL")
-    }
-
-    #Export Groups Removed and OneDrive URL to CSV
-    [pscustomobject]@{
-        GroupsRemoved    = $memberships.DisplayName -join ','
-        OneDriveSiteURL = $OneDriveSiteURL
-    } | Export-Csv -Path c:\users\$env:USERNAME\Downloads\$(get-date -f yyyy-MM-dd)_info_on_$username.csv -NoTypeInformation
-
-    #Open Created CSV File At End Of Loop For Ease Of Copying OneDrive URL To Give
-    Start-Process c:\users\$env:USERNAME\Downloads\$(get-date -f yyyy-MM-dd)_info_on_$username.csv
 })
 
 $ConvertCheckbox.Add_Checked({
