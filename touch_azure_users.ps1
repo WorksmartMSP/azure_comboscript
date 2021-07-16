@@ -76,24 +76,27 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
             </TabItem>
             <TabItem Name="CalendarTab" Header="Calendars" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
-                    <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,65,0,0" VerticalAlignment="Top" Width="473">
-                        <StackPanel HorizontalAlignment="Left" Height="151" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="189">
-                            <RadioButton Name="AuthorRadioButton" Content="Author"/>
-                            <RadioButton Name="ContributorRadioButton" Content="Contributor"/>
-                            <RadioButton Name="EditorRadioButton" Content="Editor"/>
-                            <RadioButton Name="NoneRadioButton" Content="None (View Only)" IsChecked="True"/>
-                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author"/>
-                            <RadioButton Name="OwnerRadioButton" Content="Owner"/>
-                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author"/>
-                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor"/>
-                            <RadioButton Name="ReviewerRadioButton" Content="Reviewer"/>
+                    <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="20"/>
+                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,108,0,0" VerticalAlignment="Top" Width="473">
+                        <StackPanel HorizontalAlignment="Left" Height="151" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="453">
+                            <RadioButton Name="AuthorRadioButton" Content="Author - CI, DOI, EOI, FV, RI"/>
+                            <RadioButton Name="ContributorRadioButton" Content="Contributor - CI, FV"/>
+                            <RadioButton Name="EditorRadioButton" Content="Editor - CI, DAI, DOI, EAI, EOI, FV, RI"/>
+                            <RadioButton Name="NoneRadioButton" Content="None (View Only) - FV" IsChecked="True"/>
+                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author - CI, DOI, FV, RI"/>
+                            <RadioButton Name="OwnerRadioButton" Content="Owner - CI, CS, DAI, DOI, EAI, EOI, FC, FO, FV, RI"/>
+                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author - CI, CS, DOI, EOI, FV, RI"/>
+                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor - CI, CS, DAI, DOI, EAI, EOI, FV, RI"/>
+                            <RadioButton Name="ReviewerRadioButton" Content="Reviewer - FV, RI"/>
                         </StackPanel>
                     </GroupBox>
-                    <Button Name="CalendarGoButton" Content="Update User(s)' Permissions on Calendar(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="473" Height="100"/>
-                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="103" Margin="10,241,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True">
+                    <Button Name="CalendarGoButton" Content="Update User(s)' Permissions on Calendar(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="90" Margin="10,304,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
+                    <CheckBox Name="AvailabilityOnlyCheckbox" Content="Availability Only" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top"/>
+                    <CheckBox Name="LimitedDetailsCheckbox" Content="LimitedDetails - Subject/Location" HorizontalAlignment="Left" Margin="288,284,0,0" VerticalAlignment="Top"/>
+                    <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Height="68" Width="473"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
@@ -178,6 +181,38 @@ Function Write-PasswordRichTextBox {
     )
     $RichTextRange = New-Object System.Windows.Documents.TextRange( 
         $PasswordRichTextBox.Document.ContentEnd,$PasswordRichTextBox.Document.ContentEnd ) 
+    $RichTextRange.Text = $text
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+}
+Function Write-MailboxRichTextBox {
+    Param(
+        [string]$text,
+        [string]$color = "Cyan"
+    )
+    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
+        $MailboxRichTextBox.Document.ContentEnd,$MailboxRichTextBox.Document.ContentEnd ) 
+    $RichTextRange.Text = $text
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+}
+
+Function Write-GroupRichTextBox {
+    Param(
+        [string]$text,
+        [string]$color = "Cyan"
+    )
+    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
+        $GroupRichTextBox.Document.ContentEnd,$GroupRichTextBox.Document.ContentEnd ) 
+    $RichTextRange.Text = $text
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+}
+
+Function Write-CalendarRichTextBox {
+    Param(
+        [string]$text,
+        [string]$color = "Cyan"
+    )
+    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
+        $CalendarRichTextBox.Document.ContentEnd,$CalendarRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
     $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
 }
@@ -445,6 +480,46 @@ $PasswordGoButton.Add_Click({
     }
 })
 ### End Password Tab Functionality
+
+### Start Mailbox Tab Functionality
+$MailboxReconnectButton.Add_Click({
+
+})
+
+$MailboxAddButton.Add_Click({
+
+})
+
+$MailboxRemoveButton.Add_Click({
+
+})
+### End Mailbox Tab Functionality
+
+### Start Group Tab Functionality
+$GroupReconnectButton.Add_Click({
+
+})
+
+$GroupAddButton.Add_Click({
+
+})
+
+$GroupRemoveButton.Add_Click({
+
+})
+### End Group Tab Functionality
+
+### Start Calendar Tab Functionality
+$CalendarReconnectButton.Add_Click({
+
+})
+
+$CalendarGoButton.Add_Click({
+
+})
+### End Calendar Tab Functionality
+
+
 
 ### Start User Creation Tab Functionality
 $firstnameTextbox.Add_TextChanged({
