@@ -505,23 +505,58 @@ $MailboxRemoveButton.Add_Click({
 
 ### Start Group Tab Functionality
 $GroupReconnectButton.Add_Click({
+    Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
     Try{
         Disconnect-SPOOnline -ErrorAction SilentlyContinue
     }
     Catch{
-        #Do Nothing If Not Connected to SPO, Not Needed For Creation
+        #Do Nothing If Not Connected to SPO, Not Needed For Password Reset
     }
     Connect-AzureAD
-    Connect-ExchangeOnline -ShowBanner:$false
     Set-Comboboxes
 })
 
 $GroupAddButton.Add_Click({
-
+        # Pull User ObjectID and Group ObjectID to add member to all groups selected, skipping dynamic
+        Clear-Variable users -ErrorAction SilentlyContinue
+        Clear-Variable groups -ErrorAction SilentlyContinue
+        
+        $Users = Get-AzureADUser -All $true | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
+        foreach($User in $Users){
+            $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups"
+            if ($Groups){
+                foreach($Group in $Groups){
+                    Add-AzureADGroupMember -ObjectId $Group.Id -RefObjectId $User.ObjectID
+                    Write-GroupRichTextBox("$($User.DisplayName) added to $($Group.Displayname)")
+                }
+            }
+            else {
+                Write-GroupRichTextBox("Group Selection Cancelled`r") -Color "Red"
+            }
+        }
 })
 
 $GroupRemoveButton.Add_Click({
-
+     # Pull User ObjectID and Group ObjectID to remove member to all groups selected, skipping dynamic
+     Clear-Variable users -ErrorAction SilentlyContinue
+     Clear-Variable groups -ErrorAction SilentlyContinue
+     
+     $Users = Get-AzureADUser -All $true | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
+     foreach($User in $Users){
+        $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -notcontains "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
+        foreach ($Group in $Groups) { 
+            Try
+            {
+                Remove-AzureADGroupMember -ObjectId $Group.ObjectId -MemberId $User.ObjectId
+                Write-GroupRichTextBox ("Removed $($user.Displayname) from $($Group.Displayname)`r")
+            }
+            catch
+            {
+                Write-GroupRichTextBox ("Could not remove from group $($group.name).  Error:  $_.Message") -Color "Red"
+            }
+        }
+        Write-Verbose -Message "All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination"
+     }
 })
 ### End Group Tab Functionality
 
