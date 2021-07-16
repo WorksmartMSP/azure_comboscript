@@ -46,7 +46,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
                 </Grid>
             </TabItem>
-            <TabItem Name="MailboxTab" Header="Mailboxes" Margin="-2,-2,-2,0">
+            <TabItem Name="MailboxTab" Header="Mailboxes">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -60,7 +60,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </RichTextBox>
                 </Grid>
             </TabItem>
-            <TabItem Name="GroupTab" Header="Groups" Margin="-2,-2,-2,0">
+            <TabItem Name="GroupTab" Header="Groups">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -74,7 +74,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </RichTextBox>
                 </Grid>
             </TabItem>
-            <TabItem Name="CalendarTab" Header="Calendars" Margin="-2,-2,-2,0">
+            <TabItem Name="CalendarTab" Header="Calendars">
                 <Grid Background="#FFE5E5E5">
                     <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="20"/>
                     <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,108,0,0" VerticalAlignment="Top" Width="473">
@@ -483,7 +483,15 @@ $PasswordGoButton.Add_Click({
 
 ### Start Mailbox Tab Functionality
 $MailboxReconnectButton.Add_Click({
-
+    Try{
+        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+    }
+    Catch{
+        #Do Nothing If Not Connected to SPO, Not Needed For Creation
+    }
+    Connect-AzureAD
+    Connect-ExchangeOnline -ShowBanner:$false
+    Set-Comboboxes
 })
 
 $MailboxAddButton.Add_Click({
@@ -497,7 +505,15 @@ $MailboxRemoveButton.Add_Click({
 
 ### Start Group Tab Functionality
 $GroupReconnectButton.Add_Click({
-
+    Try{
+        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+    }
+    Catch{
+        #Do Nothing If Not Connected to SPO, Not Needed For Creation
+    }
+    Connect-AzureAD
+    Connect-ExchangeOnline -ShowBanner:$false
+    Set-Comboboxes
 })
 
 $GroupAddButton.Add_Click({
@@ -511,7 +527,15 @@ $GroupRemoveButton.Add_Click({
 
 ### Start Calendar Tab Functionality
 $CalendarReconnectButton.Add_Click({
-
+    Try{
+        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+    }
+    Catch{
+        #Do Nothing If Not Connected to SPO, Not Needed For Creation
+    }
+    Connect-AzureAD
+    Connect-ExchangeOnline -ShowBanner:$false
+    Set-Comboboxes
 })
 
 $CalendarGoButton.Add_Click({
@@ -560,6 +584,12 @@ $CreateReconnectButton.Add_Click({
 
 $CreateGoButton.Add_Click({
     Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
+    Try{
+        Get-AzureADUser -ErrorAction SilentlyContinue | Out-Null
+    }
+    Catch{
+        Connect-AzureAD
+    }
     Try{
         Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
     }
