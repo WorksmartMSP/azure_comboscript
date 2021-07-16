@@ -27,6 +27,9 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
   Title="Touch Users" Height="526.201" Width="525" ResizeMode="NoResize">
 
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <TabControl Name="Tabs" HorizontalAlignment="Left" Height="487" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Name="ResetTab" Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
@@ -41,6 +44,56 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </RichTextBox>
                     <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="461"/>
                     <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
+                </Grid>
+            </TabItem>
+            <TabItem Name="MailboxTab" Header="Mailboxes" Margin="-2,-2,-2,0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="MailboxReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <Label Content="When you click Add or Remove, you may select multiple users by holding control.  The&#xD;&#xA;same applies to the mailboxes, but it will impact ALL the users you have selected.&#xD;&#xA;Please use caution if you have multiple users with different needed mailboxes." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="65" Width="473"/>
+                    <Button Name="MailboxAddButton" Content="Add User(s) to Mailbox(es)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
+                    <Button Name="MailboxRemoveButton" Content="Remove User(s) from Mailbox(es)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
+                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="209" Margin="10,135,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True">
+                        <FlowDocument/>
+                    </RichTextBox>
+                </Grid>
+            </TabItem>
+            <TabItem Name="GroupTab" Header="Groups" Margin="-2,-2,-2,0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="GroupReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <Label Content="When you click Add or Remove, you may select multiple users by holding control.  The&#xA;same applies to the groups, but it will impact ALL the users you have selected.&#xA;Please use caution if you have multiple users with different needed groups." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="65" Width="473"/>
+                    <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
+                    <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
+                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="209" Margin="10,135,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464">
+                        <FlowDocument/>
+                    </RichTextBox>
+                </Grid>
+            </TabItem>
+            <TabItem Name="CalendarTab" Header="Calendars" Margin="-2,-2,-2,0">
+                <Grid Background="#FFE5E5E5">
+                    <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,65,0,0" VerticalAlignment="Top" Width="473">
+                        <StackPanel HorizontalAlignment="Left" Height="151" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="189">
+                            <RadioButton Name="AuthorRadioButton" Content="Author"/>
+                            <RadioButton Name="ContributorRadioButton" Content="Contributor"/>
+                            <RadioButton Name="EditorRadioButton" Content="Editor"/>
+                            <RadioButton Name="NoneRadioButton" Content="None (View Only)" IsChecked="True"/>
+                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author"/>
+                            <RadioButton Name="OwnerRadioButton" Content="Owner"/>
+                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author"/>
+                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor"/>
+                            <RadioButton Name="ReviewerRadioButton" Content="Reviewer"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <Button Name="CalendarGoButton" Content="Update User(s)' Permissions on Calendar(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="473" Height="100"/>
+                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="103" Margin="10,241,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True">
+                        <FlowDocument/>
+                    </RichTextBox>
                 </Grid>
             </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
