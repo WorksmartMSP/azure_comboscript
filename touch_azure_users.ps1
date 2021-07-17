@@ -54,16 +54,22 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="MailboxReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                     <Label Content="Pick a Mailbox to apply permissions to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="28" Width="473"/>
                     <Button Name="MailboxGoButton" Content="Set Mailbox Permissions For User(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="143" Margin="10,251,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
+                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="105" Margin="10,289,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="MailboxButton" Content="Pick Mailbox" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" Width="231" Height="50"/>
                     <TextBox Name="MailboxTextBox" HorizontalAlignment="Left" Height="23" Margin="246,114,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" Background="#FFC8C8C8" IsReadOnly="True"/>
                     <Label Content="Checked permissions will be set, unchecked permissions will be removed.  Output will&#xD;&#xA;always show updated, as it overwrites without error." HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="473"/>
-                    <CheckBox Name="FullAccessCheckbox" Content="Full Access" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top"/>
-                    <CheckBox Name="SendAsCheckbox" Content="Send As" HorizontalAlignment="Left" Margin="164,200,0,0" VerticalAlignment="Top"/>
-                    <CheckBox Name="SendOnBehalfCheckbox" Content="Send On Behalf" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.811,0.444"/>
-                    <Label Content="When you hit the button below, select multiple users by holding Ctrl." HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="473"/>
+                    <CheckBox Name="FullAccessCheckbox" Content="Full Access" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <CheckBox Name="SendAsCheckbox" Content="Send As" HorizontalAlignment="Left" Margin="164,200,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <CheckBox Name="SendOnBehalfCheckbox" Content="Send On Behalf" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.811,0.444" IsChecked="True"/>
+                    <GroupBox Header="AutoMap (Full Access Only)" HorizontalAlignment="Left" Height="64" Margin="10,220,0,0" VerticalAlignment="Top" Width="252">
+                        <Grid HorizontalAlignment="Left" Height="44" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="232">
+                            <RadioButton Name="AutoMapYesRadioButton" Content="Yes" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                            <RadioButton Name="AutoMapNoRadioButton" Content="No" HorizontalAlignment="Left" Margin="61,10,0,0" VerticalAlignment="Top"/>
+                            <CheckBox Name="ForceRemapCheckbox" Content="Force Remap?" HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem Name="GroupTab" Header="Groups" Margin="-2,-2,-2,0">
@@ -83,8 +89,8 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
             <TabItem Name="CalendarTab" Header="Calendars" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
                     <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="20"/>
-                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,108,0,0" VerticalAlignment="Top" Width="473">
-                        <StackPanel HorizontalAlignment="Left" Height="151" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="453">
+                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="197" Margin="10,97,0,0" VerticalAlignment="Top" Width="473">
+                        <StackPanel HorizontalAlignment="Left" Height="185" Margin="10,10,-2,-23" VerticalAlignment="Top" Width="453">
                             <RadioButton Name="AuthorRadioButton" Content="Author - CI, DOI, EOI, FV, RI"/>
                             <RadioButton Name="ContributorRadioButton" Content="Contributor - CI, FV"/>
                             <RadioButton Name="EditorRadioButton" Content="Editor - CI, DAI, DOI, EAI, EOI, FV, RI"/>
@@ -94,15 +100,15 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                             <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author - CI, CS, DOI, EOI, FV, RI"/>
                             <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor - CI, CS, DAI, DOI, EAI, EOI, FV, RI"/>
                             <RadioButton Name="ReviewerRadioButton" Content="Reviewer - FV, RI"/>
+                            <RadioButton Name="AvailabilityOnlyRadioButton" Content="Availability Only"/>
+                            <RadioButton Name="LimitedDetailsRadioButton" Content="Limited Details - Availability + Subject and Location"/>
                         </StackPanel>
                     </GroupBox>
                     <Button Name="CalendarGoButton" Content="Update User(s)' Permissions on Calendar(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="90" Margin="10,304,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="95" Margin="10,299,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <CheckBox Name="AvailabilityOnlyCheckbox" Content="Availability Only" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top"/>
-                    <CheckBox Name="LimitedDetailsCheckbox" Content="LimitedDetails - Subject/Location" HorizontalAlignment="Left" Margin="288,284,0,0" VerticalAlignment="Top"/>
-                    <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Height="68" Width="473"/>
+                    <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Height="57" Width="473"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
@@ -517,7 +523,17 @@ $MailboxGoButton.Add_Click({
     if($SharedMailboxUsers){
         foreach($SharedMailboxUser in $SharedMailboxUsers){
                 if($FullAccessCheckBox.IsChecked){
-                    Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                    if($AutoMapYesRadioButton.IsChecked){
+                        if($ForceRemapCheckBox.IsChecked){
+                            Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                        }
+                        Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $true | Out-Null
+                    }elseif($AutoMapNoRadioButton.IsChecked){
+                        if($ForceRemapCheckBox.IsChecked){
+                            Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                        }
+                        Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $false | Out-Null
+                    }
                     Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r")
                 }else{
                     Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
