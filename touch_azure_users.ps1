@@ -46,21 +46,27 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
                 </Grid>
             </TabItem>
-            <TabItem Name="MailboxTab" Header="Mailboxes">
+            <TabItem Name="MailboxTab" Header="Mailboxes" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Button Name="MailboxReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <Label Content="When you click Add or Remove, you may select multiple users by holding control.  The&#xD;&#xA;same applies to the mailboxes, but it will impact ALL the users you have selected.&#xD;&#xA;Please use caution if you have multiple users with different needed mailboxes." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="65" Width="473"/>
-                    <Button Name="MailboxAddButton" Content="Add User(s) to Mailbox(es)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
-                    <Button Name="MailboxRemoveButton" Content="Remove User(s) from Mailbox(es)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
-                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="209" Margin="10,135,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True">
+                    <Label Content="Pick a Mailbox to apply permissions to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="28" Width="473"/>
+                    <Button Name="MailboxGoButton" Content="Set Mailbox Permissions For User(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="143" Margin="10,251,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
+                    <Button Name="MailboxButton" Content="Pick Mailbox" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" Width="231" Height="50"/>
+                    <TextBox Name="MailboxTextBox" HorizontalAlignment="Left" Height="23" Margin="246,114,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" Background="#FFC8C8C8" IsReadOnly="True"/>
+                    <Label Content="Checked permissions will be set, unchecked permissions will be removed.  Output will&#xD;&#xA;always show updated, as it overwrites without error." HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="473"/>
+                    <CheckBox Name="FullAccessCheckbox" Content="Full Access" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top"/>
+                    <CheckBox Name="SendAsCheckbox" Content="Send As" HorizontalAlignment="Left" Margin="164,200,0,0" VerticalAlignment="Top"/>
+                    <CheckBox Name="SendOnBehalfCheckbox" Content="Send On Behalf" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.811,0.444"/>
+                    <Label Content="When you hit the button below, select multiple users by holding Ctrl." HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="473"/>
                 </Grid>
             </TabItem>
-            <TabItem Name="GroupTab" Header="Groups">
+            <TabItem Name="GroupTab" Header="Groups" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -69,12 +75,12 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Label Content="When you click Add or Remove, you may select multiple users by holding control.  The&#xA;same applies to the groups, but it will impact ALL the users you have selected.&#xA;Please use caution if you have multiple users with different needed groups." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="65" Width="473"/>
                     <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
                     <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
-                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="209" Margin="10,135,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464">
+                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="209" Margin="10,135,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                 </Grid>
             </TabItem>
-            <TabItem Name="CalendarTab" Header="Calendars">
+            <TabItem Name="CalendarTab" Header="Calendars" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
                     <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="20"/>
                     <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,108,0,0" VerticalAlignment="Top" Width="473">
@@ -91,7 +97,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         </StackPanel>
                     </GroupBox>
                     <Button Name="CalendarGoButton" Content="Update User(s)' Permissions on Calendar(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="90" Margin="10,304,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True">
+                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="90" Margin="10,304,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <CheckBox Name="AvailabilityOnlyCheckbox" Content="Availability Only" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top"/>
@@ -120,7 +126,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,218,0,0" VerticalAlignment="Top" Width="107"/>
                     <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,249,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
                     <Label Content="--Once you have filled in&#xA;the required details, click &#xA;Create User.&#xA;&#xD;&#xA;--The button will&#xA;activate when the left is&#xD;&#xA;filled in, the right is not&#xD;&#xA;required for all tenants.&#xD;&#xA;&#xD;&#xA;--You will be prompted to &#xD;&#xA;connect to Exchange&#xD;&#xA;Online, then for Licenses&#xD;&#xA;and Groups to add." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,41,0,0" Height="230" Width="155"/>
-                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True">
+                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="300" Height="100" IsEnabled="False" TabIndex="11"/>
@@ -148,7 +154,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         </StackPanel>
                     </GroupBox>
                     <Button Name="RemoveGoButton" Content="Terminate User" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="473" Height="52"/>
-                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="194" Margin="10,198,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464">
+                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="194" Margin="10,198,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
@@ -494,36 +500,48 @@ $MailboxReconnectButton.Add_Click({
     Set-Comboboxes
 })
 
-$MailboxAddButton.Add_Click({
+$MailboxButton.Add_Click({
+    $TempMailbox = Get-Mailbox -ResultSize Unlimited | Select-Object Displayname,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select a Mailbox" -OutputMode Single
+    $MailboxTextbox.Text = $TempMailbox.UserPrincipalName
+})
+
+$MailboxGoButton.Add_Click({
     Try {
         Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
     }
     Catch {
         Connect-ExchangeOnline -ShowBanner:$false
     }
-    Clear-Variable Mailboxes -ErrorAction SilentlyContinue
     Clear-Variable SharedMailboxUsers -ErrorAction SilentlyContinue
-    $SharedMailboxUsers = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } |  Select-Object Displayname, UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select User to Grant Access - Hold Ctrl for Multiple" -Passthru
+    $SharedMailboxUsers = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } |  Select-Object Displayname, UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select User to Update Access - Hold Ctrl for Multiple" -Passthru
     if($SharedMailboxUsers){
-        $Mailboxes = Get-Mailbox -ResultSize Unlimited | Select-Object DisplayName,UserPrincipalName | Out-GridView -Title "Select Mailbox to Share - Hold Ctrl for Multiple" -Passthru
-        if($Mailboxes){
-            foreach($Mailbox in $Mailboxes){
-                foreach($SharedMailboxUser in $SharedMailboxUsers){
-                    Add-MailboxPermission -Identity $Mailbox.UserPrincipalName -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
-                    Add-RecipientPermission -Identity $Mailbox.UserPrincipalName -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False | Out-Null
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has been added to $($Mailbox.DisplayName)'s Mailbox`r")
+        foreach($SharedMailboxUser in $SharedMailboxUsers){
+                if($FullAccessCheckBox.IsChecked){
+                    Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r")
+                }else{
+                    Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r") -Color "Orange"
                 }
-            }
-        }else{
-            Write-MailboxRichTextBox("No Mailbox Selected`r") -Color "Red"    
+                if($SendAsCheckbox.IsChecked){
+                    Add-RecipientPermission -Identity $MailboxTextBox.Text -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions updated on $($MailboxTextBox.Text)`r")
+                }else{
+                    Remove-RecipientPermission -Identity $MailboxTextBox.Text -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions updated on $($MailboxTextBox.Text)`r") -Color "Orange"
+                }
+                if($SendOnBehalfCheckbox.IsChecked){
+                    Set-Mailbox -Identity $MailboxTextBox.Text -GrantSendOnBehalfTo @{Add="$($SharedMailboxUser.UserPrincipalName)"} -Confirm:$false
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions updated on $($MailboxTextBox.Text)`r")
+                }else{
+                    Set-Mailbox -Identity $MailboxTextBox.Text -GrantSendOnBehalfTo @{Remove="$($SharedMailboxUser.UserPrincipalName)"} -Confirm:$false
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions updated on $($MailboxTextBox.Text)`r") -Color Orange
+                }
         }
+        $MailboxTextBox.Text = ""
     }else{
-        Write-MailboxRichTextBox("No User Selected`r") -Color "Red"
+        Write-MailboxRichTextBox("No User Selected") -Color "Red"
     }
-})
-
-$MailboxRemoveButton.Add_Click({
-
 })
 ### End Mailbox Tab Functionality
 
