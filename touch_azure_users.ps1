@@ -499,13 +499,26 @@ $MailboxAddButton.Add_Click({
         Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
     }
     Catch {
-        Connect-ExchangeOnline
+        Connect-ExchangeOnline -ShowBanner:$false
     }
-    $Mailboxes = Get-Mailbox -ResultSize Unlimited | Out-GridView -Title "Select Mailbox to Share - Hold Ctrl for Multiple" -Passthru
-    foreach($Mailbox in $Mailboxes){
-        $SharedMailboxUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } |  Select-Object Displayname, ObjectID | Sort-Object Displayname | Out-GridView -Title "Select User to Grant Access - Hold Ctrl for Multiple" -Passthru
-        Add-MailboxPermission -Identity $Mailbox -User $SharedMailboxUser -AccessRights FullAccess -InheritanceType All
-        Add-RecipientPermission -Identity $Mailbox -Trustee $SharedMailboxUser -AccessRights SendAs -Confirm:$False
+    Clear-Variable Mailboxes -ErrorAction SilentlyContinue
+    Clear-Variable SharedMailboxUsers -ErrorAction SilentlyContinue
+    $SharedMailboxUsers = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } |  Select-Object Displayname, UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select User to Grant Access - Hold Ctrl for Multiple" -Passthru
+    if($SharedMailboxUsers){
+        $Mailboxes = Get-Mailbox -ResultSize Unlimited | Select-Object DisplayName,UserPrincipalName | Out-GridView -Title "Select Mailbox to Share - Hold Ctrl for Multiple" -Passthru
+        if($Mailboxes){
+            foreach($Mailbox in $Mailboxes){
+                foreach($SharedMailboxUser in $SharedMailboxUsers){
+                    Add-MailboxPermission -Identity $Mailbox.UserPrincipalName -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                    Add-RecipientPermission -Identity $Mailbox.UserPrincipalName -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False | Out-Null
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has been added to $($Mailbox.DisplayName)'s Mailbox`r")
+                }
+            }
+        }else{
+            Write-MailboxRichTextBox("No Mailbox Selected`r") -Color "Red"    
+        }
+    }else{
+        Write-MailboxRichTextBox("No User Selected`r") -Color "Red"
     }
 })
 
@@ -535,21 +548,24 @@ $GroupAddButton.Add_Click({
         Connect-AzureAD
     }
     # Pull User ObjectID and Group ObjectID to add member to all groups selected, skipping dynamic
-    Clear-Variable users -ErrorAction SilentlyContinue
-    Clear-Variable groups -ErrorAction SilentlyContinue
+    Clear-Variable Users -ErrorAction SilentlyContinue
+    Clear-Variable roups -ErrorAction SilentlyContinue
     
     $Users = Get-AzureADUser -All $true | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
-    foreach($User in $Users){
-        $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups"
-        if ($Groups){
-            foreach($Group in $Groups){
-                Add-AzureADGroupMember -ObjectId $Group.Id -RefObjectId $User.ObjectID
-                Write-GroupRichTextBox("$($User.DisplayName) added to $($Group.Displayname)")
+    if($Users){
+        foreach($User in $Users){
+            $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups"
+            if ($Groups){
+                foreach($Group in $Groups){
+                    Add-AzureADGroupMember -ObjectId $Group.Id -RefObjectId $User.ObjectID
+                    Write-GroupRichTextBox("$($User.DisplayName) added to $($Group.Displayname)")
+                }
+            }else{
+                Write-GroupRichTextBox("Group Selection Cancelled`r") -Color "Red"
             }
         }
-        else {
-            Write-GroupRichTextBox("Group Selection Cancelled`r") -Color "Red"
-        }
+    }else{
+        Write-GroupRichTextBox("User Selection Cancelled`r") -Color "Red"
     }
 })
 
