@@ -643,7 +643,7 @@ $GroupRemoveButton.Add_Click({
                 }
                 catch
                 {
-                    Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $_.Message") -Color "Red"
+                    Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $($_.Exception.Message)`r") -Color "Red"
                 }
             }
         }
@@ -682,7 +682,7 @@ $CalendarButton.Add_Click({
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
-    $TempCalendar = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Pick a Calendar" -OutputMode Single
+    $TempCalendar = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select Calendar" -OutputMode Single
     $CalendarTextBox.Text = $TempCalendar.UserPrincipalName + ":\calendar"
 })
 
@@ -697,7 +697,6 @@ $CalendarGoButton.Add_Click({
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
-
 
 })
 ### End Calendar Tab Functionality
@@ -909,7 +908,7 @@ $RemoveGoButton.Add_Click({
                     Try{
                         Remove-AzureADGroupMember -ObjectId $membership.ObjectId -MemberId $UserInfo.ObjectId -ErrorAction Stop
                     }Catch{
-                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $_.Message`r") -color "Yellow"
+                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $($_.Exception.Message)`r") -color "Yellow"
                     }
                 }
             }
