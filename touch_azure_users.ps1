@@ -633,18 +633,22 @@ $GroupRemoveButton.Add_Click({
     
     $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
     if($Users){
-        $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -notcontains "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
         foreach($User in $Users){
-            foreach ($Group in $Groups) { 
-                Try
-                {
-                    Remove-AzureADGroupMember -ObjectId $Group.ObjectId -MemberId $User.ObjectId
-                    Write-GroupRichTextBox ("Removed $($user.Displayname) from $($Group.Displayname)`r")
+            $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -notcontains "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
+            if($Groups){}
+                foreach ($Group in $Groups) { 
+                    Try
+                    {
+                        Remove-AzureADGroupMember -ObjectId $Group.ObjectId -MemberId $User.ObjectId
+                        Write-GroupRichTextBox ("Removed $($user.Displayname) from $($Group.Displayname)`r")
+                    }
+                    catch
+                    {
+                        Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $($_.Exception.Message)`r") -Color "Red"
+                    }
                 }
-                catch
-                {
-                    Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $($_.Exception.Message)`r") -Color "Red"
-                }
+            }else{
+                Write-GroupRichTextBox("Group Selection Cancelled") -Color "Red"
             }
         }
     }else{
