@@ -78,10 +78,10 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Button Name="GroupReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <Label Content="When you click Add or Remove, you may select multiple users by holding control.  The&#xA;same applies to the groups, but it will impact ALL the users you have selected.&#xA;Please use caution if you have multiple users with different needed groups." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="65" Width="473"/>
+                    <Label Content="--When you click Add, you may select multiple users by holding control.  The same&#xD;&#xA;applies to the groups, but it will impact ALL the users you have selected. Please use&#xD;&#xA;caution if you have multiple users with different needed groups.&#xD;&#xA;--When you click Remove, you may select multiple users by holding control.  Groups&#xD;&#xA;work a bit differently, as it will check each user and provide you a prompt to remove&#xD;&#xA;groups based on their membership(s), so you will have to select group(s) for each user." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="111" Width="473"/>
                     <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
                     <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
-                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="209" Margin="10,135,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="153" Margin="10,191,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                 </Grid>
@@ -635,7 +635,7 @@ $GroupRemoveButton.Add_Click({
     if($Users){
         foreach($User in $Users){
             $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -notcontains "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
-            if($Groups){}
+            if($Groups){
                 foreach ($Group in $Groups) { 
                     Try
                     {
