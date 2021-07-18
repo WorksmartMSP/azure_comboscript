@@ -672,8 +672,8 @@ $CalendarUserButton.Add_Click({
     }Catch{
         Connect-AzureAD
     }
-    $tempUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User" -OutputMode Single
-    $CalendarUserTextBox.Text = $tempuser.UserPrincipalName
+    $TempCalendarUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Select-Object DisplayName,UserprincipalName | Sort-Object DisplayName | Out-GridView -Title "Select User" -OutputMode Single
+    $CalendarUserTextBox.Text = $TempCalendarUser.UserPrincipalName
 })
 
 $CalendarButton.Add_Click({
@@ -682,7 +682,7 @@ $CalendarButton.Add_Click({
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
-    $TempCalendar = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Out-GridView -Title "Pick a Calendar" -OutputMode Single
+    $TempCalendar = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Pick a Calendar" -OutputMode Single
     $CalendarTextBox.Text = $TempCalendar.UserPrincipalName + ":\calendar"
 })
 
