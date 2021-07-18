@@ -46,7 +46,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
                 </Grid>
             </TabItem>
-            <TabItem Name="MailboxTab" Header="Mailboxes" Margin="-2,-2,-2,0">
+            <TabItem Name="MailboxTab" Header="Mailboxes">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -72,7 +72,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Name="GroupTab" Header="Groups" Margin="-2,-2,-2,0">
+            <TabItem Name="GroupTab" Header="Groups">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -86,29 +86,36 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </RichTextBox>
                 </Grid>
             </TabItem>
-            <TabItem Name="CalendarTab" Header="Calendars" Margin="-2,-2,-2,0">
+            <TabItem Name="CalendarTab" Header="Calendars">
                 <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
                     <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="20"/>
-                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="197" Margin="10,97,0,0" VerticalAlignment="Top" Width="473">
-                        <StackPanel HorizontalAlignment="Left" Height="185" Margin="10,10,-2,-23" VerticalAlignment="Top" Width="453">
-                            <RadioButton Name="AuthorRadioButton" Content="Author - CI, DOI, EOI, FV, RI"/>
-                            <RadioButton Name="ContributorRadioButton" Content="Contributor - CI, FV"/>
-                            <RadioButton Name="EditorRadioButton" Content="Editor - CI, DAI, DOI, EAI, EOI, FV, RI"/>
-                            <RadioButton Name="NoneRadioButton" Content="None (View Only) - FV" IsChecked="True"/>
-                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author - CI, DOI, FV, RI"/>
-                            <RadioButton Name="OwnerRadioButton" Content="Owner - CI, CS, DAI, DOI, EAI, EOI, FC, FO, FV, RI"/>
-                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author - CI, CS, DOI, EOI, FV, RI"/>
-                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor - CI, CS, DAI, DOI, EAI, EOI, FV, RI"/>
-                            <RadioButton Name="ReviewerRadioButton" Content="Reviewer - FV, RI"/>
-                            <RadioButton Name="AvailabilityOnlyRadioButton" Content="Availability Only"/>
-                            <RadioButton Name="LimitedDetailsRadioButton" Content="Limited Details - Availability + Subject and Location"/>
-                        </StackPanel>
+                    <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,148,0,0" VerticalAlignment="Top" Width="473">
+                        <Grid HorizontalAlignment="Left" Height="179" Margin="10,10,-2,-41" VerticalAlignment="Top" Width="453">
+                            <RadioButton Name="AuthorRadioButton" Content="Author - CI, DOI, EOI, FV, RI" Margin="0,0,0,162"/>
+                            <RadioButton Name="ContributorRadioButton" Content="Contributor - CI, FV" Margin="221,0,10,162"/>
+                            <RadioButton Name="EditorRadioButton" Content="Editor - CI, DAI, DOI, EAI, EOI, FV, RI" Margin="0,20,0,142"/>
+                            <RadioButton Name="NoneRadioButton" Content="None - FV" IsChecked="True" Margin="221,20,10,142"/>
+                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author - CI, DOI, FV, RI" Margin="0,40,0,122"/>
+                            <RadioButton Name="OwnerRadioButton" Content="Owner - CI, CS, DAI, DOI, EAI, EOI, FC, FO, FV, RI" Margin="0,60,0,102"/>
+                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author - CI, CS, DOI, EOI, FV, RI" Margin="0,80,0,82"/>
+                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor - CI, CS, DAI, DOI, EAI, EOI, FV, RI" Margin="0,100,0,62"/>
+                            <RadioButton Name="ReviewerRadioButton" Content="Reviewer - FV, RI" Margin="221,40,10,122"/>
+                            <RadioButton Name="AvailabilityOnlyRadioButton" Content="Availability Only" Margin="0,120,0,42"/>
+                            <RadioButton Name="LimitedDetailsRadioButton" Content="Limited Details - Availability + Subject and Location" Margin="123,120,10,42"/>
+                        </Grid>
                     </GroupBox>
-                    <Button Name="CalendarGoButton" Content="Update User(s)' Permissions on Calendar(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="95" Margin="10,299,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Button Name="CalendarGoButton" Content="Update User's Permissions on Calendar" HorizontalAlignment="Left" Margin="10,424,0,0" VerticalAlignment="Top" Width="473" Height="25"/>
+                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="95" Margin="10,324,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Height="57" Width="473"/>
+                    <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" Height="57" Width="473"/>
+                    <Button Name="CalendarUserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="230"/>
+                    <Button Name="CalendarButton" Content="Pick Calendar" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="230"/>
+                    <TextBox Name="CalendarUserTextBox" HorizontalAlignment="Left" Height="20" Margin="245,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" Background="#FFC8C8C8" IsReadOnly="True"/>
+                    <TextBox Name="CalendarTextBox" HorizontalAlignment="Left" Height="20" Margin="245,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" Background="#FFC8C8C8" IsReadOnly="True"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
@@ -464,6 +471,11 @@ $PasswordReconnectButton.Add_Click({
 })
 
 $UserButton.Add_Click({
+    Try{
+        Get-AzuserADUser -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-AzureAD
+    }
     $tempuser = Get-AzureADUser -all $true | Out-GridView -Outputmode Single
     $UserTextBox.Text = $tempuser.UserPrincipalName
 })
@@ -507,6 +519,11 @@ $MailboxReconnectButton.Add_Click({
 })
 
 $MailboxButton.Add_Click({
+    Try{
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
     $TempMailbox = Get-Mailbox -ResultSize Unlimited | Select-Object Displayname,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select a Mailbox" -OutputMode Single
     $MailboxTextbox.Text = $TempMailbox.UserPrincipalName
 })
@@ -583,9 +600,9 @@ $GroupAddButton.Add_Click({
     }
     # Pull User ObjectID and Group ObjectID to add member to all groups selected, skipping dynamic
     Clear-Variable Users -ErrorAction SilentlyContinue
-    Clear-Variable roups -ErrorAction SilentlyContinue
+    Clear-Variable Groups -ErrorAction SilentlyContinue
     
-    $Users = Get-AzureADUser -All $true | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
+    $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
     if($Users){
         $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups"
         if ($Groups){
@@ -614,7 +631,7 @@ $GroupRemoveButton.Add_Click({
     Clear-Variable Users -ErrorAction SilentlyContinue
     Clear-Variable Groups -ErrorAction SilentlyContinue
     
-    $Users = Get-AzureADUser -All $true | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
+    $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
     if($Users){
         $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -notcontains "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
         foreach($User in $Users){
@@ -649,7 +666,38 @@ $CalendarReconnectButton.Add_Click({
     Set-Comboboxes
 })
 
+$CalendarUserButton.Add_Click({
+    Try{
+        Get-AzureADUser -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-AzureAD
+    }
+    $tempUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User" -OutputMode Single
+    $CalendarUserTextBox.Text = $tempuser.UserPrincipalName
+})
+
+$CalendarButton.Add_Click({
+    Try{
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
+    $TempCalendar = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Out-GridView -Title "Pick a Calendar" -OutputMode Single
+    $CalendarTextBox.Text = $TempCalendar.UserPrincipalName + ":\calendar"
+})
+
 $CalendarGoButton.Add_Click({
+    Try{
+        Get-AzureADUser -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-AzureAD
+    }
+    Try{
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
+
 
 })
 ### End Calendar Tab Functionality
