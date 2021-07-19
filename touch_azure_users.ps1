@@ -81,7 +81,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Label Content="--When you click Add, you may select multiple users by holding control.  The same&#xD;&#xA;applies to the groups, but it will impact ALL the users you have selected. Please use&#xD;&#xA;caution if you have multiple users with different needed groups.&#xD;&#xA;--When you click Remove, you may select multiple users by holding control.  Groups&#xD;&#xA;work a bit differently, as it will check each user and provide you a prompt to remove&#xD;&#xA;groups based on their membership(s), so you will have to select group(s) for each user." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="111" Width="473"/>
                     <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
                     <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
-                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="153" Margin="10,191,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="168" Margin="10,176,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                 </Grid>
@@ -94,14 +94,14 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="CalendarReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="20"/>
                     <GroupBox Header="Select Needed Permissions - http://worksmart.link/7f for Permissions Information" HorizontalAlignment="Left" Height="171" Margin="10,148,0,0" VerticalAlignment="Top" Width="473">
                         <Grid HorizontalAlignment="Left" Height="179" Margin="10,10,-2,-41" VerticalAlignment="Top" Width="453">
-                            <RadioButton Name="AuthorRadioButton" Content="Author - CI, DOI, EOI, FV, RI" Margin="0,0,0,162"/>
+                            <RadioButton Name="AuthorRadioButton" Content="Author - CI, DOI, EOI, FV, RI" Margin="0,0,237,162"/>
                             <RadioButton Name="ContributorRadioButton" Content="Contributor - CI, FV" Margin="221,0,10,162"/>
-                            <RadioButton Name="EditorRadioButton" Content="Editor - CI, DAI, DOI, EAI, EOI, FV, RI" Margin="0,20,0,142"/>
+                            <RadioButton Name="EditorRadioButton" Content="Editor - CI, DAI, DOI, EAI, EOI, FV, RI" Margin="0,20,237,142"/>
                             <RadioButton Name="NoneRadioButton" Content="None - FV" IsChecked="True" Margin="221,20,10,142"/>
-                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author - CI, DOI, FV, RI" Margin="0,40,0,122"/>
-                            <RadioButton Name="OwnerRadioButton" Content="Owner - CI, CS, DAI, DOI, EAI, EOI, FC, FO, FV, RI" Margin="0,60,0,102"/>
-                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author - CI, CS, DOI, EOI, FV, RI" Margin="0,80,0,82"/>
-                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor - CI, CS, DAI, DOI, EAI, EOI, FV, RI" Margin="0,100,0,62"/>
+                            <RadioButton Name="NonEditingAuthorRadioButton" Content="NonEditing Author - CI, DOI, FV, RI" Margin="0,40,237,122"/>
+                            <RadioButton Name="OwnerRadioButton" Content="Owner - CI, CS, DAI, DOI, EAI, EOI, FC, FO, FV, RI" Margin="0,60,176,102"/>
+                            <RadioButton Name="PublishingAuthorRadioButton" Content="Publishing Author - CI, CS, DOI, EOI, FV, RI" Margin="0,80,0,82" HorizontalAlignment="Left" Width="251"/>
+                            <RadioButton Name="PublishingEditorRadioButton" Content="Publishing Editor - CI, CS, DAI, DOI, EAI, EOI, FV, RI" Margin="0,100,161,62"/>
                             <RadioButton Name="ReviewerRadioButton" Content="Reviewer - FV, RI" Margin="221,40,10,122"/>
                             <RadioButton Name="AvailabilityOnlyRadioButton" Content="Availability Only" Margin="0,120,0,42"/>
                             <RadioButton Name="LimitedDetailsRadioButton" Content="Limited Details - Availability + Subject and Location" Margin="123,120,10,42"/>
