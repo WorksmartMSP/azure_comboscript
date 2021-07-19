@@ -697,11 +697,164 @@ $CalendarGoButton.Add_Click({
         Connect-AzureAD
     }
     Try{
-        Get-Mailbox -ErrorAction Stop | Out-Null
+        Get-ExoMailbox -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
+    if($AuthorRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Author -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set Author permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Author -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added Author permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
 
+            }Catch{
+                Write-CalendarRichTextBox("Author Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($ContributorRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Contributor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Contributor -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("Contributor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($EditorRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Editor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Editor -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("Editor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($NoneRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights None -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights None -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("None Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($NonEditingAuthorRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights NonEditingAuthor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set NonEditingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights NonEditingAuthor -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added NonEditingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("NonEditingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($ReviewerRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Reviewer -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set Reviewer permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Reviewer -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added Reviewer permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("Reviewer Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($OwnerRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Owner -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Owner -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("Owner Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($PublishingAuthorRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingAuthor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingAuthor -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("PublishingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($PublishingEditorRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingEditor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingEditor -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("PublishingEditor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($AvailabilityOnlyRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights AvailabilityOnly -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights AvailabilityOnly -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("AvailabilityOnly Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
+    elseif($LimitedDetailsRadioButton.IsChecked){
+        Try{
+            Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights LimitedDetails -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
+            Write-CalendarRichTextBox("Successfully set LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+        }Catch{
+            Try{
+                Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights LimitedDetails -Confirm:$false -ErrorAction Stop
+                Write-CalendarRichTextBox("Successfully added LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+    
+            }Catch{
+                Write-CalendarRichTextBox("LimitedDetails Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+            }
+        }
+    }
 })
 ### End Calendar Tab Functionality
 
