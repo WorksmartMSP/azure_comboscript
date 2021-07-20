@@ -1107,29 +1107,39 @@ $RemoveGoButton.Add_Click({
             Try{
                 Get-SPOSite -ErrorAction Stop | Out-Null
             }Catch{
-                Connect-SPOService -Url $AdminSiteURL
+                Try{
+                    Connect-SPOService -Url $AdminSiteURL
+                }Catch{
+                    Write-RemoveRichTextBox "SharePointOnline Could Not Connect"
+                    Break
+                }
             }
         }
 
         #Share OneDrive With Same User as Shared Mailbox
-        if ($OneDriveSameRadioButton.IsChecked -eq $true) {
+        if ($OneDriveSameRadioButton.IsChecked) {
             #Pull OneDriveSiteURL Dynamically And Grant Access
             $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
 
-            #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
+            #Add User Receiving Access To Terminated User's OneDrive
             Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
             Write-RemoveRichTextBox("OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r")
         }
         #Share OneDrive With Different User(s) than Shared Mailbox
-        elseif ($OneDriveDifferentRadioButton.IsChecked -eq $true) {
+        elseif ($OneDriveDifferentRadioButton.IsChecked) {
             $SharedOneDriveUser = $allusers.Values | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
             
             #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
-            $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
+            if($SharedOneDriveUser){
+                $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
 
-            #Add User Receiving Access To Terminated User's OneDrive, Add The Access Link To CSV File For Copying
-            Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
-            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r")
+                #Add User Receiving Access To Terminated User's OneDrive
+                Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
+                Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r")
+            }else{
+                Write-RemoveRichTextBox "OneDrive Share Cancelled"
+                Clear-Variable OneDriveSiteURL -ErrorAction SilentlyContinue
+            }
         }
 
         #Export Groups Removed and OneDrive URL to CSV
