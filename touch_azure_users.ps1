@@ -503,6 +503,10 @@ $PasswordGoButton.Add_Click({
         $PasswordRichTextBox.ScrollToEnd()
     }
 })
+
+$PasswordRichTextBox.Add_TextChanged({
+    $PasswordRichTextBox.ScrollToEnd()
+})
 ### End Password Tab Functionality
 
 ### Start Mailbox Tab Functionality
@@ -575,6 +579,10 @@ $MailboxGoButton.Add_Click({
     }else{
         Write-MailboxRichTextBox("No User Selected") -Color "Red"
     }
+})
+
+$MailboxRichTextBox.Add_TextChanged({
+    $MailboxRichTextBox.ScrollToEnd()
 })
 ### End Mailbox Tab Functionality
 
@@ -654,6 +662,10 @@ $GroupRemoveButton.Add_Click({
     }else{
         Write-GroupRichTextBox ("User Selection Cancelled") -Color "Red"
     }
+})
+
+$GroupRichTextBox.Add_TextChanged({
+    $GroupRichTextBox.ScrollToEnd()
 })
 ### End Group Tab Functionality
 
@@ -856,6 +868,10 @@ $CalendarGoButton.Add_Click({
         }
     }
 })
+
+$CalendarRichTextBox.Add_TextChanged({
+    $CalendarRichTextBox.ScrollToEnd()
+})
 ### End Calendar Tab Functionality
 
 
@@ -1015,6 +1031,10 @@ Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
 Clear-Variable Groups -ErrorAction SilentlyContinue
 Clear-Variable UserExists -ErrorAction SilentlyContinue
 })
+
+$CreateRichTextBox.Add_TextChanged({
+    $CreateRichTextBox.ScrollToEnd()
+})
 ### End User Creation Tab Functionality
 
 ### Start User Termination Tab Functionality
@@ -1151,6 +1171,10 @@ $RemoveGoButton.Add_Click({
         #Open Created CSV File At End Of Loop For Ease Of Copying OneDrive URL To Give
         Start-Process c:\users\$env:USERNAME\Downloads\$(get-date -f yyyy-MM-dd)_info_on_$username.csv
     }
+})
+
+$RemoveRichTextBox.Add_TextChanged({
+    $RemoveRichTextBox.ScrollToEnd()
 })
 
 $ConvertCheckbox.Add_Checked({
