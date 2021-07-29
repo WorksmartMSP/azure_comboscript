@@ -2,17 +2,17 @@ Add-Type -AssemblyName PresentationFramework
 
 # Test For Modules
 if(-not(Get-Module ExchangeOnlineManagement -ListAvailable)){
-    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details')
+    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view http://worksmart.link/7l for details')
     Exit
 }
 
 if(-not(Get-Module AzureAD -ListAvailable)){
-    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details')
+    $null = [System.Windows.MessageBox]::Show('Please Install AzureAD - view http://worksmart.link/7l for details')
     Exit
 }
 
 if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
-    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view ITG for details')
+    $null = [System.Windows.MessageBox]::Show('Please Install SharePoint Online - view http://worksmart.link/7l for details')
     Exit
 }
 
