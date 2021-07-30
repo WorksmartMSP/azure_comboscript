@@ -552,33 +552,33 @@ $MailboxGoButton.Add_Click({
                 if($FullAccessCheckBox.IsChecked){
                     if($AutoMapYesRadioButton.IsChecked){
                         if($ForceRemapCheckBox.IsChecked){
-                            Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                            Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -Confirm:$False | Out-Null
                         }
-                        Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $true | Out-Null
+                        Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $true -Confirm:$False | Out-Null
                     }elseif($AutoMapNoRadioButton.IsChecked){
                         if($ForceRemapCheckBox.IsChecked){
-                            Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
+                            Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -Confirm:$False | Out-Null
                         }
-                        Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $false | Out-Null
+                        Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $false -Confirm:$False | Out-Null
                     }
                     Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r")
                 }else{
-                    Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All | Out-Null
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r") -Color "Orange"
+                    Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -Confirm:$False | Out-Null
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions removed on $($MailboxTextBox.Text)`r") -Color "Orange"
                 }
                 if($SendAsCheckbox.IsChecked){
                     Add-RecipientPermission -Identity $MailboxTextBox.Text -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False
                     Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions updated on $($MailboxTextBox.Text)`r")
                 }else{
                     Remove-RecipientPermission -Identity $MailboxTextBox.Text -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions updated on $($MailboxTextBox.Text)`r") -Color "Orange"
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions removed on $($MailboxTextBox.Text)`r") -Color "Orange"
                 }
                 if($SendOnBehalfCheckbox.IsChecked){
                     Set-Mailbox -Identity $MailboxTextBox.Text -GrantSendOnBehalfTo @{Add="$($SharedMailboxUser.UserPrincipalName)"} -Confirm:$false
                     Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions updated on $($MailboxTextBox.Text)`r")
                 }else{
                     Set-Mailbox -Identity $MailboxTextBox.Text -GrantSendOnBehalfTo @{Remove="$($SharedMailboxUser.UserPrincipalName)"} -Confirm:$false
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions updated on $($MailboxTextBox.Text)`r") -Color Orange
+                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions removed on $($MailboxTextBox.Text)`r") -Color "Orange"
                 }
         }
         $MailboxTextBox.Text = ""
