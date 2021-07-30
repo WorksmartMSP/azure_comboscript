@@ -24,7 +24,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
-  Title="Touch Users" Height="526.201" Width="525" ResizeMode="NoResize">
+  Title="Azure Comboscript" Height="526.201" Width="525" ResizeMode="NoResize">
 
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.RowDefinitions>
