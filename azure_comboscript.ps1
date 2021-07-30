@@ -472,7 +472,7 @@ $PasswordReconnectButton.Add_Click({
 
 $UserButton.Add_Click({
     Try{
-        Get-AzuserADUser -ErrorAction Stop | Out-Null
+        Get-AzureADUser -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
     }
