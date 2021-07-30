@@ -1003,7 +1003,7 @@ $CreateGoButton.Add_Click({
             $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -Property Displayname,Id
             if ($Groups){
                 foreach($group in $Groups){
-                    Add-AzureADGroupMember -ObjectId $group -RefObjectId $user.ObjectID
+                    Add-AzureADGroupMember -ObjectId $group.Id -RefObjectId $user.ObjectID
                     Write-CreateRichTextBox("Added $($user.DisplayName) to $($group.DisplayName)`r")
                 }
                 
