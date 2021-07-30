@@ -476,7 +476,7 @@ $UserButton.Add_Click({
     }Catch{
         Connect-AzureAD
     }
-    $tempuser = Get-AzureADUser -all $true | Out-GridView -Outputmode Single
+    $tempuser = Get-AzureADUser -all $true | Out-GridView -Title "Please Select A User" -Outputmode Single
     $UserTextBox.Text = $tempuser.UserPrincipalName
 })
 
