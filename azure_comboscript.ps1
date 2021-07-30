@@ -1020,7 +1020,7 @@ $CreateGoButton.Add_Click({
             else {
                 Write-CreateRichTextBox("No Groups Selected`r") -Color "Yellow"
             }
-            Write-CreateRichTextBox("User created for $($firstnameTextbox.Text) $($lastnameTextbox.Text)")
+            Write-CreateRichTextBox("User created for $($firstnameTextbox.Text) $($lastnameTextbox.Text)`r")
             $CustomAttribute1Textbox.Text = ""
             $cityTextbox.Text = ""
             $stateTextbox.Text = ""
