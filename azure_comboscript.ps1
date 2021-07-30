@@ -201,7 +201,8 @@ Function Write-PasswordRichTextBox {
     $RichTextRange = New-Object System.Windows.Documents.TextRange( 
         $PasswordRichTextBox.Document.ContentEnd,$PasswordRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )
+    $PasswordRichTextBox.ScrollToEnd()  
 }
 Function Write-MailboxRichTextBox {
     Param(
@@ -212,6 +213,7 @@ Function Write-MailboxRichTextBox {
         $MailboxRichTextBox.Document.ContentEnd,$MailboxRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
     $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+    $MailboxRichTextBox.ScrollToEnd()
 }
 
 Function Write-GroupRichTextBox {
@@ -222,7 +224,8 @@ Function Write-GroupRichTextBox {
     $RichTextRange = New-Object System.Windows.Documents.TextRange( 
         $GroupRichTextBox.Document.ContentEnd,$GroupRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color ) 
+    $GroupRichTextBox.ScrollToEnd() 
 }
 
 Function Write-CalendarRichTextBox {
@@ -234,6 +237,7 @@ Function Write-CalendarRichTextBox {
         $CalendarRichTextBox.Document.ContentEnd,$CalendarRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
     $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+    $CalendarRichTextBox.ScrollToEnd()
 }
 
 Function Write-CreateRichTextBox {
@@ -244,7 +248,8 @@ Function Write-CreateRichTextBox {
     $RichTextRange = New-Object System.Windows.Documents.TextRange( 
         $CreateRichTextBox.Document.ContentEnd,$CreateRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color ) 
+    $CreateRichTextBox.ScrollToEnd() 
 }
 
 Function Write-RemoveRichTextBox {
@@ -255,7 +260,8 @@ Function Write-RemoveRichTextBox {
     $RichTextRange = New-Object System.Windows.Documents.TextRange( 
         $RemoveRichTextBox.Document.ContentEnd,$RemoveRichTextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )
+    $RemoveTextBox.ScrollToEnd()  
 }
 
 Function Set-Comboboxes {
@@ -617,7 +623,7 @@ $GroupAddButton.Add_Click({
             foreach($User in $Users){
                 foreach($Group in $Groups){
                     Add-AzureADGroupMember -ObjectId $Group.Id -RefObjectId $User.ObjectID
-                    Write-GroupRichTextBox("$($User.DisplayName) added to $($Group.Displayname)")
+                    Write-GroupRichTextBox("$($User.DisplayName) added to $($Group.Displayname)`r")
                 }
             }
         }else{
