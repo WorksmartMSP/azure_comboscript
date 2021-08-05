@@ -1,1 +1,1 @@
-This script is designed to combine all user operations into one WPF script.
+This script is designed to combine multiple user operations into one WPF GUI based Powershell script.
