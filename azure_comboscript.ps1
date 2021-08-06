@@ -1166,6 +1166,7 @@ $RemoveGoButton.Add_Click({
                 #Add User Receiving Access To Terminated User's OneDrive
                 Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
                 Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r")
+                Clear-Variable SharedOneDriveUser -Erroraction SilentlyContinue
             }else{
                 Write-RemoveRichTextBox "OneDrive Share Cancelled"
                 Clear-Variable OneDriveSiteURL -ErrorAction SilentlyContinue
