@@ -485,6 +485,8 @@ $UserButton.Add_Click({
     }Catch{
         Connect-AzureAD
     }
+    Set-Comboboxes
+
     $tempuser = Get-AzureADUser -all $true | Out-GridView -Title "Please Select A User" -Outputmode Single
     $UserTextBox.Text = $tempuser.UserPrincipalName
 })
@@ -613,8 +615,10 @@ $GroupAddButton.Add_Click({
         Get-AzureADUser -ErrorAction SilentlyContinue | Out-Null
     }
     Catch{
-        Connect-AzureAD
+        Connect-AzureAD        
     }
+    Set-Comboboxes
+
     # Pull User ObjectID and Group ObjectID to add member to all groups selected, skipping dynamic
     Clear-Variable Users -ErrorAction SilentlyContinue
     Clear-Variable Groups -ErrorAction SilentlyContinue
@@ -644,6 +648,8 @@ $GroupRemoveButton.Add_Click({
     Catch{
         Connect-AzureAD
     }
+    Set-Comboboxes
+
     # Pull User ObjectID and Group ObjectID to remove member to all groups selected, skipping dynamic
     Clear-Variable Users -ErrorAction SilentlyContinue
     Clear-Variable Groups -ErrorAction SilentlyContinue
@@ -697,6 +703,8 @@ $CalendarUserButton.Add_Click({
     }Catch{
         Connect-AzureAD
     }
+    Set-Comboboxes
+
     $TempCalendarUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Select-Object DisplayName,UserprincipalName | Sort-Object DisplayName | Out-GridView -Title "Select User" -OutputMode Single
     $CalendarUserTextBox.Text = $TempCalendarUser.UserPrincipalName
 })
@@ -717,6 +725,7 @@ $CalendarGoButton.Add_Click({
     }Catch{
         Connect-AzureAD
     }
+    Set-Comboboxes
     Try{
         Get-ExoMailbox -ErrorAction Stop | Out-Null
     }Catch{
@@ -930,6 +939,7 @@ $CreateGoButton.Add_Click({
     Catch{
         Connect-AzureAD
     }
+    Set-Comboboxes
     Try{
         Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
     }
@@ -1063,6 +1073,7 @@ $RemoveGoButton.Add_Click({
     }Catch{
         Connect-AzureAD
     }
+    Set-Comboboxes
     Try{
         Get-Mailbox -ErrorAction Stop | Out-Null
     }Catch{
@@ -1213,7 +1224,6 @@ $UserForm.Add_Loaded({
     }Catch{
         Connect-AzureAD
     }
-    
     Set-Comboboxes
 })
 
