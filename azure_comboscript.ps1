@@ -470,7 +470,7 @@ $UserTextBox.Add_TextChanged({
 $PasswordReconnectButton.Add_Click({
     Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
     Try{
-        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+        Disconnect-SPOService -ErrorAction SilentlyContinue
     }
     Catch{
         #Do Nothing If Not Connected to SPO, Not Needed For Password Reset
@@ -523,7 +523,7 @@ $PasswordRichTextBox.Add_TextChanged({
 ### Start Mailbox Tab Functionality
 $MailboxReconnectButton.Add_Click({
     Try{
-        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+        Disconnect-SPOService -ErrorAction SilentlyContinue
     }
     Catch{
         #Do Nothing If Not Connected to SPO, Not Needed For Mailboxes
@@ -601,7 +601,7 @@ $MailboxRichTextBox.Add_TextChanged({
 $GroupReconnectButton.Add_Click({
     Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
     Try{
-        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+        Disconnect-SPOService -ErrorAction SilentlyContinue
     }
     Catch{
         #Do Nothing If Not Connected to SPO, Not Needed For Groups
@@ -687,7 +687,7 @@ $GroupRichTextBox.Add_TextChanged({
 ### Start Calendar Tab Functionality
 $CalendarReconnectButton.Add_Click({
     Try{
-        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+        Disconnect-SPOService -ErrorAction SilentlyContinue
     }
     Catch{
         #Do Nothing If Not Connected to SPO, Not Needed For Creation
@@ -921,7 +921,7 @@ $UsageLocationCombobox.Add_SelectionChanged({
 
 $CreateReconnectButton.Add_Click({
     Try{
-        Disconnect-SPOOnline -ErrorAction SilentlyContinue
+        Disconnect-SPOService -ErrorAction SilentlyContinue
     }
     Catch{
         #Do Nothing If Not Connected to SPO, Not Needed For Creation
