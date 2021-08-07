@@ -424,15 +424,15 @@ function MailboxExistCheck {
         )
     Clear-Variable MailboxExistsCheck -ErrorAction SilentlyContinue
     #Start Mailbox Check Wait Loop
-    while ($MailboxExistsCheck -ne "YES") {
+    while ($MailboxExistsCheck -ne $true) {
         try {
             Get-Mailbox $user -ErrorAction Stop
-            $MailboxExistsCheck = "YES"
+            $MailboxExistsCheck = $true
         }
         catch {
             $null = [System.Windows.MessageBox]::Show("Mailbox Does Not Exist, Waiting 60 Seconds and Trying Again")
             Start-Sleep -Seconds 60
-            $MailboxExistsCheck = "NO"
+            $MailboxExistsCheck = $false
         }
     }#End Mailbox Check Wait Loop    
 }
@@ -545,7 +545,7 @@ $MailboxButton.Add_Click({
 
 $MailboxGoButton.Add_Click({
     Try {
-        Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
+        Get-Mailbox -ErrorAction Stop | Out-Null
     }
     Catch {
         Connect-ExchangeOnline -ShowBanner:$false
@@ -612,7 +612,7 @@ $GroupReconnectButton.Add_Click({
 
 $GroupAddButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction SilentlyContinue | Out-Null
+        Get-AzureADUser -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-AzureAD        
@@ -643,7 +643,7 @@ $GroupAddButton.Add_Click({
 
 $GroupRemoveButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction SilentlyContinue | Out-Null
+        Get-AzureADUser -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-AzureAD
@@ -934,14 +934,14 @@ $CreateReconnectButton.Add_Click({
 $CreateGoButton.Add_Click({
     Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
     Try{
-        Get-AzureADUser -ErrorAction SilentlyContinue | Out-Null
+        Get-AzureADUser -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-AzureAD
     }
     Set-Comboboxes
     Try{
-        Get-Mailbox -ErrorAction SilentlyContinue | Out-Null
+        Get-Mailbox -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-ExchangeOnline -ShowBanner:$false
@@ -1106,8 +1106,13 @@ $RemoveGoButton.Add_Click({
                     Try{
                         Remove-AzureADGroupMember -ObjectId $membership.ObjectId -MemberId $UserInfo.ObjectId -ErrorAction Stop
                     }Catch{
-                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $($_.Exception.Message)`r") -color "Yellow"
+                        $message = $_.Exception.Message
+                        if ($_.Exception.ErrorContent.Message.Value) {
+                            $message = $_.Exception.ErrorContent.Message.Value
+                        }
+                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $message`r") -color "Yellow"
                     }
+             
                 }
             }
         Write-RemoveRichTextBox("All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination`r")
