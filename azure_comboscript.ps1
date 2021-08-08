@@ -184,8 +184,7 @@ Try{
     $UserForm = [Windows.Markup.XamlReader]::Load($reader)
 }
 Catch{
-    Write-Host "Unable to load Windows.Markup.XamlReader.  Some possible causes for this problem include: .NET Framework is missing PowerShell must be launched with PowerShell -sta, invalid XAML code was encountered."
-    Exit
+    Write-Host "Unable to load Windows.Markup.XamlReader.  Some possible causes for this problem include: .NET Framework is missing PowerShell must be launched with PowerShell -sta, invalid XAML code was encountered."    Exit
 }
 
 #Create Variables For Use In Script Automatically
@@ -484,8 +483,8 @@ $UserButton.Add_Click({
         Get-AzureADUser -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
+        Set-Comboboxes
     }
-    Set-Comboboxes
 
     $tempuser = Get-AzureADUser -all $true | Out-GridView -Title "Please Select A User" -Outputmode Single
     $UserTextBox.Text = $tempuser.UserPrincipalName
@@ -616,8 +615,8 @@ $GroupAddButton.Add_Click({
     }
     Catch{
         Connect-AzureAD        
+        Set-Comboboxes
     }
-    Set-Comboboxes
 
     # Pull User ObjectID and Group ObjectID to add member to all groups selected, skipping dynamic
     Clear-Variable Users -ErrorAction SilentlyContinue
@@ -647,8 +646,8 @@ $GroupRemoveButton.Add_Click({
     }
     Catch{
         Connect-AzureAD
+        Set-Comboboxes
     }
-    Set-Comboboxes
 
     # Pull User ObjectID and Group ObjectID to remove member to all groups selected, skipping dynamic
     Clear-Variable Users -ErrorAction SilentlyContinue
@@ -667,7 +666,11 @@ $GroupRemoveButton.Add_Click({
                     }
                     catch
                     {
-                        Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $($_.Exception.Message)`r") -Color "Red"
+                        $message = $_.Exception.Message
+                        if ($_.Exception.ErrorContent.Message.Value) {
+                            $message = $_.Exception.ErrorContent.Message.Value
+                        }
+                        Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $message)`r") -Color "Red"
                     }
                 }
             }else{
@@ -702,8 +705,8 @@ $CalendarUserButton.Add_Click({
         Get-AzureADUser -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
+        Set-Comboboxes
     }
-    Set-Comboboxes
 
     $TempCalendarUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Select-Object DisplayName,UserprincipalName | Sort-Object DisplayName | Out-GridView -Title "Select User" -OutputMode Single
     $CalendarUserTextBox.Text = $TempCalendarUser.UserPrincipalName
@@ -711,7 +714,7 @@ $CalendarUserButton.Add_Click({
 
 $CalendarButton.Add_Click({
     Try{
-        Get-Mailbox -ErrorAction Stop | Out-Null
+        Get-ExoMailbox -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
@@ -724,8 +727,8 @@ $CalendarGoButton.Add_Click({
         Get-AzureADUser -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
+        Set-Comboboxes
     }
-    Set-Comboboxes
     Try{
         Get-ExoMailbox -ErrorAction Stop | Out-Null
     }Catch{
@@ -933,15 +936,19 @@ $CreateReconnectButton.Add_Click({
 
 $CreateGoButton.Add_Click({
     Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
+    Clear-Variable UserExists -ErrorAction SilentlyContinue
+    Clear-Variable Licenses -ErrorAction SilentlyContinue
+    Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
+    Clear-Variable Groups -ErrorAction SilentlyContinue
     Try{
         Get-AzureADUser -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-AzureAD
+        Set-Comboboxes
     }
-    Set-Comboboxes
     Try{
-        Get-Mailbox -ErrorAction Stop | Out-Null
+        Get-ExoMailbox -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-ExchangeOnline -ShowBanner:$false
@@ -957,7 +964,6 @@ $CreateGoButton.Add_Click({
         }
     }
     while($AvailableLicenseCheck -ne $true){
-        Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
         $SelectedLicenses = $Licenses | Sort-Object SkuPartNumber | Out-GridView -Passthru -Title "Hold Ctrl For Multiple Licenses"
         foreach($SelectedLicense in $SelectedLicenses){
             if($SelectedLicense.Enabled-$SelectedLicense.ConsumedUnits -ge 1){
@@ -971,6 +977,7 @@ $CreateGoButton.Add_Click({
             }
         }
         if(-not($SelectedLicenses)){
+            Write-CreateRichTextBox("No License Selected`r") -Color "Red"
             Break
         }
     }
@@ -982,7 +989,7 @@ $CreateGoButton.Add_Click({
         $displayname = $firstnameTextbox.text + " " + $lastnameTextbox.Text
         $usageloc = $UsageLocations[$UsageLocationComboBox.Text]
                
-        #Test if User with matching UPN already exists, then exits
+        #Test if User with matching UPN already exists
         try {
             Write-CreateRichTextBox("Testing If Username Does Not Exist`r")
             Get-AzureAdUSer -ObjectID $UPN -ErrorAction Stop | Out-Null
@@ -1045,11 +1052,6 @@ $CreateGoButton.Add_Click({
             Write-CreateRichTextBox("Username $UPN Exists as $($ExistingUser.DisplayName), Please Review and Try Again`r") -Color "Red"
         }
     }
-Clear-Variable Licenses -ErrorAction SilentlyContinue
-Clear-Variable SelectedLicenses -ErrorAction SilentlyContinue
-Clear-Variable AvailableLicenseCheck -ErrorAction SilentlyContinue
-Clear-Variable Groups -ErrorAction SilentlyContinue
-Clear-Variable UserExists -ErrorAction SilentlyContinue
 })
 
 $CreateRichTextBox.Add_TextChanged({
@@ -1072,8 +1074,8 @@ $RemoveGoButton.Add_Click({
         Get-AzureADUser -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
+        Set-Comboboxes
     }
-    Set-Comboboxes
     Try{
         Get-Mailbox -ErrorAction Stop | Out-Null
     }Catch{
@@ -1085,7 +1087,7 @@ $RemoveGoButton.Add_Click({
     foreach ($user in Get-AzureADUser -All $true){ $allUsers[$user.UserPrincipalName] = $user }
     
     #Request Username(s) To Be Terminated From Script Runner (Hold Ctrl To Select Multiples)
-    $username = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-Gridview -OutputMode Single -Title "Please select the user(s) to be terminated" | Select-Object -ExpandProperty UserPrincipalName
+    $username = $allUsers.Values | Where-Object {$_.AccountEnabled } | Sort-Object DisplayName | Select-Object -Property DisplayName,UserPrincipalName | Out-Gridview -OutputMode Single -Title "Please select the user to be terminated" | Select-Object -ExpandProperty UserPrincipalName
     
     ##### Start User(s) Loop #####
     if($username){
