@@ -191,79 +191,21 @@ Catch{
 $xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name ($_.Name) -Value $UserForm.FindName($_.Name)}
 ### End XAML and Variables from XAML
 
-# Create Functions For Color Changing Output
-Function Write-PasswordRichTextBox {
+Function Write-RichTextBox {
     Param(
-        [string]$text,
-        [string]$color = "Cyan"
+        [System.Windows.Controls.RichTextBox]$TextBox,
+        [string]$Text,
+        [string]$Color = "Cyan"
     )
     $RichTextRange = New-Object System.Windows.Documents.TextRange( 
-        $PasswordRichTextBox.Document.ContentEnd,$PasswordRichTextBox.Document.ContentEnd ) 
-    $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )
-    $PasswordRichTextBox.ScrollToEnd()  
-}
-Function Write-MailboxRichTextBox {
-    Param(
-        [string]$text,
-        [string]$color = "Cyan"
-    )
-    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
-        $MailboxRichTextBox.Document.ContentEnd,$MailboxRichTextBox.Document.ContentEnd ) 
-    $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
-    $MailboxRichTextBox.ScrollToEnd()
-}
-
-Function Write-GroupRichTextBox {
-    Param(
-        [string]$text,
-        [string]$color = "Cyan"
-    )
-    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
-        $GroupRichTextBox.Document.ContentEnd,$GroupRichTextBox.Document.ContentEnd ) 
-    $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color ) 
-    $GroupRichTextBox.ScrollToEnd() 
-}
-
-Function Write-CalendarRichTextBox {
-    Param(
-        [string]$text,
-        [string]$color = "Cyan"
-    )
-    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
-        $CalendarRichTextBox.Document.ContentEnd,$CalendarRichTextBox.Document.ContentEnd ) 
-    $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )  
-    $CalendarRichTextBox.ScrollToEnd()
-}
-
-Function Write-CreateRichTextBox {
-    Param(
-        [string]$text,
-        [string]$color = "Cyan"
-    )
-    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
-        $CreateRichTextBox.Document.ContentEnd,$CreateRichTextBox.Document.ContentEnd ) 
-    $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color ) 
-    $CreateRichTextBox.ScrollToEnd() 
-}
-
-Function Write-RemoveRichTextBox {
-    Param(
-        [string]$text,
-        [string]$color = "Cyan"
-    )
-    $RichTextRange = New-Object System.Windows.Documents.TextRange( 
-        $RemoveRichTextBox.Document.ContentEnd,$RemoveRichTextBox.Document.ContentEnd ) 
-    $RichTextRange.Text = $text
-    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $color )
-    $RemoveTextBox.ScrollToEnd()  
+        $TextBox.Document.ContentEnd,$TextBox.Document.ContentEnd ) 
+    $RichTextRange.Text = $Text
+    $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $Color )
+    $TextBox.ScrollToEnd()  
 }
 
 Function Set-Comboboxes {
+    $UsageLocationComboBox.Items.Clear()
     foreach($UsageLocation in $UsageLocations.keys)
     {
         $null = $UsageLocationComboBox.Items.Add($usagelocation)
@@ -480,7 +422,7 @@ $PasswordReconnectButton.Add_Click({
 
 $UserButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
         Set-Comboboxes
@@ -500,7 +442,7 @@ $PasswordGoButton.Add_Click({
             Set-AzureADUserPassword -ObjectID $UserTextBox.Text -Password $securepassword -ForceChangePasswordNextLogin $false -ErrorAction Stop
         }
 
-        Write-PasswordRichTextBox("SUCCESS:  $($UserTextBox.Text)'s password has been reset to $($PasswordTextBox.Text)`r")
+        Write-RichtextBox -TextBox $PasswordRichTextBox -Text "SUCCESS:  $($UserTextBox.Text)'s password has been reset to $($PasswordTextBox.Text)`r"
         $PasswordRichTextBox.ScrollToEnd()
         $UserTextbox.Text = ""
         $PasswordTextBox.Text = ""
@@ -509,7 +451,7 @@ $PasswordGoButton.Add_Click({
         if ($_.Exception.ErrorContent.Message.Value) {
             $message = $_.Exception.ErrorContent.Message.Value
         }
-        Write-PasswordRichTextBox("$message`rFAILURE:  Please review above and try again`r") -Color "Red"
+        Write-RichtextBox -TextBox $PasswordRichTextBox -Text "$message`rFAILURE:  Please review above and try again`r" -Color "Red"
         $PasswordRichTextBox.ScrollToEnd()
     }
 })
@@ -534,7 +476,7 @@ $MailboxReconnectButton.Add_Click({
 
 $MailboxButton.Add_Click({
     Try{
-        Get-Mailbox -ErrorAction Stop | Out-Null
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
@@ -544,7 +486,7 @@ $MailboxButton.Add_Click({
 
 $MailboxGoButton.Add_Click({
     Try {
-        Get-Mailbox -ErrorAction Stop | Out-Null
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }
     Catch {
         Connect-ExchangeOnline -ShowBanner:$false
@@ -565,29 +507,29 @@ $MailboxGoButton.Add_Click({
                         }
                         Add-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -AutoMapping $false -Confirm:$False | Out-Null
                     }
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r")
+                    Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($SharedMailboxUser.Displayname) has had Full Access permissions updated on $($MailboxTextBox.Text)`r"
                 }else{
                     Remove-MailboxPermission -Identity $MailboxTextBox.Text -User $SharedMailboxUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -Confirm:$False | Out-Null
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Full Access permissions removed on $($MailboxTextBox.Text)`r") -Color "Orange"
+                    Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($SharedMailboxUser.Displayname) has had Full Access permissions removed on $($MailboxTextBox.Text)`r" -Color "Orange"
                 }
                 if($SendAsCheckbox.IsChecked){
                     Add-RecipientPermission -Identity $MailboxTextBox.Text -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions updated on $($MailboxTextBox.Text)`r")
+                    Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($SharedMailboxUser.Displayname) has had Send As permissions updated on $($MailboxTextBox.Text)`r"
                 }else{
                     Remove-RecipientPermission -Identity $MailboxTextBox.Text -Trustee $SharedMailboxUser.UserPrincipalName -AccessRights SendAs -Confirm:$False
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send As permissions removed on $($MailboxTextBox.Text)`r") -Color "Orange"
+                    Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($SharedMailboxUser.Displayname) has had Send As permissions removed on $($MailboxTextBox.Text)`r" -Color "Orange"
                 }
                 if($SendOnBehalfCheckbox.IsChecked){
                     Set-Mailbox -Identity $MailboxTextBox.Text -GrantSendOnBehalfTo @{Add="$($SharedMailboxUser.UserPrincipalName)"} -Confirm:$false
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions updated on $($MailboxTextBox.Text)`r")
+                    Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($SharedMailboxUser.Displayname) has had Send On Behalf permissions updated on $($MailboxTextBox.Text)`r"
                 }else{
                     Set-Mailbox -Identity $MailboxTextBox.Text -GrantSendOnBehalfTo @{Remove="$($SharedMailboxUser.UserPrincipalName)"} -Confirm:$false
-                    Write-MailboxRichTextBox("$($SharedMailboxUser.Displayname) has had Send On Behalf permissions removed on $($MailboxTextBox.Text)`r") -Color "Orange"
+                    Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($SharedMailboxUser.Displayname) has had Send On Behalf permissions removed on $($MailboxTextBox.Text)`r" -Color "Orange"
                 }
         }
         $MailboxTextBox.Text = ""
     }else{
-        Write-MailboxRichTextBox("No User Selected") -Color "Red"
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "No User Selected" -Color "Red"
     }
 })
 
@@ -611,7 +553,7 @@ $GroupReconnectButton.Add_Click({
 
 $GroupAddButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-AzureAD        
@@ -624,25 +566,25 @@ $GroupAddButton.Add_Click({
     
     $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
     if($Users){
-        $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups"
+        $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -ne "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups"
         if ($Groups){
             foreach($User in $Users){
                 foreach($Group in $Groups){
                     Add-AzureADGroupMember -ObjectId $Group.Id -RefObjectId $User.ObjectID
-                    Write-GroupRichTextBox("$($User.DisplayName) added to $($Group.Displayname)`r")
+                    Write-RichtextBox -TextBox $GroupRichTextBox -Text "$($User.DisplayName) added to $($Group.Displayname)`r"
                 }
             }
         }else{
-            Write-GroupRichTextBox("Group Selection Cancelled`r") -Color "Red"
+            Write-RichtextBox -TextBox $GroupRichTextBox -Text "Group Selection Cancelled`r" -Color "Red"
         }
     }else{
-        Write-GroupRichTextBox("User Selection Cancelled`r") -Color "Red"
+        Write-RichtextBox -TextBox $GroupRichTextBox -Text "User Selection Cancelled`r" -Color "Red"
     }
 })
 
 $GroupRemoveButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-AzureAD
@@ -656,13 +598,13 @@ $GroupRemoveButton.Add_Click({
     $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
     if($Users){
         foreach($User in $Users){
-            $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -notcontains "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
+            $Groups = Get-AzureADUserMembership -ObjectId $user.ObjectId | Where-Object {($_.ObjectType -ne "Role") -and ($_.GroupTypes -ne "DynamicMembership")} | Select-Object DisplayName,ObjectId | Sort-Object Displayname | Out-GridView -Title "Select Group - Hold Ctrl for Multiple" -PassThru
             if($Groups){
                 foreach ($Group in $Groups) { 
                     Try
                     {
                         Remove-AzureADGroupMember -ObjectId $Group.ObjectId -MemberId $User.ObjectId
-                        Write-GroupRichTextBox ("Removed $($user.Displayname) from $($Group.Displayname)`r")
+                        Write-RichtextBox -TextBox $GroupRichTextBox -Text "Removed $($user.Displayname) from $($Group.Displayname)`r"
                     }
                     catch
                     {
@@ -670,15 +612,15 @@ $GroupRemoveButton.Add_Click({
                         if ($_.Exception.ErrorContent.Message.Value) {
                             $message = $_.Exception.ErrorContent.Message.Value
                         }
-                        Write-GroupRichTextBox ("Could not remove from group $($Group.Displayname).  Error:  $message)`r") -Color "Red"
+                        Write-RichtextBox -TextBox $GroupRichTextBox -Text "Could not remove from group $($Group.Displayname).  Error:  $message)`r" -Color "Red"
                     }
                 }
             }else{
-                Write-GroupRichTextBox("Group Selection Cancelled") -Color "Red"
+                Write-RichtextBox -TextBox $GroupRichTextBox -Text "Group Selection Cancelled" -Color "Red"
             }
         }
     }else{
-        Write-GroupRichTextBox ("User Selection Cancelled") -Color "Red"
+        Write-RichtextBox -TextBox $GroupRichTextBox -Text "User Selection Cancelled" -Color "Red"
     }
 })
 
@@ -702,7 +644,7 @@ $CalendarReconnectButton.Add_Click({
 
 $CalendarUserButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
         Set-Comboboxes
@@ -714,7 +656,7 @@ $CalendarUserButton.Add_Click({
 
 $CalendarButton.Add_Click({
     Try{
-        Get-ExoMailbox -ErrorAction Stop | Out-Null
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
@@ -724,167 +666,167 @@ $CalendarButton.Add_Click({
 
 $CalendarGoButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
         Set-Comboboxes
     }
     Try{
-        Get-ExoMailbox -ErrorAction Stop | Out-Null
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
     if($AuthorRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Author -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set Author permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set Author permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Author -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added Author permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Author permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
 
             }Catch{
-                Write-CalendarRichTextBox("Author Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Author Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($ContributorRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Contributor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Contributor -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("Contributor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Contributor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($EditorRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Editor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Editor -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("Editor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Editor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($NoneRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights None -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights None -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("None Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "None Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($NonEditingAuthorRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights NonEditingAuthor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set NonEditingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set NonEditingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights NonEditingAuthor -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added NonEditingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added NonEditingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("NonEditingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "NonEditingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($ReviewerRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Reviewer -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set Reviewer permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set Reviewer permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Reviewer -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added Reviewer permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Reviewer permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("Reviewer Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Reviewer Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($OwnerRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Owner -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Owner -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("Owner Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Owner Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($PublishingAuthorRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingAuthor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingAuthor -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("PublishingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "PublishingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($PublishingEditorRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingEditor -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingEditor -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("PublishingEditor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "PublishingEditor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($AvailabilityOnlyRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights AvailabilityOnly -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights AvailabilityOnly -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("AvailabilityOnly Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "AvailabilityOnly Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
     elseif($LimitedDetailsRadioButton.IsChecked){
         Try{
             Set-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights LimitedDetails -Confirm:$false -ErrorAction Stop -WarningAction SilentlyContinue
-            Write-CalendarRichTextBox("Successfully set LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+            Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully set LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights LimitedDetails -Confirm:$false -ErrorAction Stop
-                Write-CalendarRichTextBox("Successfully added LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r")
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
     
             }Catch{
-                Write-CalendarRichTextBox("LimitedDetails Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r") -Color "Red"
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "LimitedDetails Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
         }
     }
@@ -948,7 +890,7 @@ $CreateGoButton.Add_Click({
         Set-Comboboxes
     }
     Try{
-        Get-ExoMailbox -ErrorAction Stop | Out-Null
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }
     Catch{
         Connect-ExchangeOnline -ShowBanner:$false
@@ -977,7 +919,7 @@ $CreateGoButton.Add_Click({
             }
         }
         if(-not($SelectedLicenses)){
-            Write-CreateRichTextBox("No License Selected`r") -Color "Red"
+            Write-RichtextBox -TextBox $CreateRichTextBox -Text "No License Selected`r" -Color "Red"
             Break
         }
     }
@@ -991,13 +933,13 @@ $CreateGoButton.Add_Click({
                
         #Test if User with matching UPN already exists
         try {
-            Write-CreateRichTextBox("Testing If Username Does Not Exist`r")
+            Write-RichtextBox -TextBox $CreateRichTextBox -Text "Testing If Username Does Not Exist`r"
             Get-AzureAdUSer -ObjectID $UPN -ErrorAction Stop | Out-Null
             $UserExists = $true
         }
         #Otherwise, creates user and assigns licenses selected in first step
         catch {
-            Write-CreateRichTextBox("Username Does Not Exist, Creating User and Assigning Licenses`r")
+            Write-RichtextBox -TextBox $CreateRichTextBox -Text "Username Does Not Exist, Creating User and Assigning Licenses`r"
             $UserExists = $false
         }
 
@@ -1026,18 +968,18 @@ $CreateGoButton.Add_Click({
         
             $user = Get-AzureADUser -ObjectID $UPN
             MailboxExistCheck($UPN)
-            $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -notcontains "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -Property Displayname,Id
+            $Groups = Get-AzureADMSGroup -All $true | Where-Object {$_.GroupTypes -ne "DynamicMembership"} | Select-Object DisplayName,Description,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -Property Displayname,Id
             if ($Groups){
                 foreach($group in $Groups){
                     Add-AzureADGroupMember -ObjectId $group.Id -RefObjectId $user.ObjectID
-                    Write-CreateRichTextBox("Added $($user.DisplayName) to $($group.DisplayName)`r")
+                    Write-RichtextBox -TextBox $CreateRichTextBox -Text "Added $($user.DisplayName) to $($group.DisplayName)`r"
                 }
                 
             }
             else {
-                Write-CreateRichTextBox("No Groups Selected`r") -Color "Yellow"
+                Write-RichtextBox -TextBox $CreateRichTextBox -Text "No Groups Selected`r" -Color "Yellow"
             }
-            Write-CreateRichTextBox("User created for $($firstnameTextbox.Text) $($lastnameTextbox.Text)`r")
+            Write-RichtextBox -TextBox $CreateRichTextBox -Text "User created for $($firstnameTextbox.Text) $($lastnameTextbox.Text)`r"
             $CustomAttribute1Textbox.Text = ""
             $cityTextbox.Text = ""
             $stateTextbox.Text = ""
@@ -1049,7 +991,7 @@ $CreateGoButton.Add_Click({
         }
         Else{
             $ExistingUser = Get-AzureADUser -ObjectID $UPN
-            Write-CreateRichTextBox("Username $UPN Exists as $($ExistingUser.DisplayName), Please Review and Try Again`r") -Color "Red"
+            Write-RichtextBox -TextBox $CreateRichTextBox -Text "Username $UPN Exists as $($ExistingUser.DisplayName), Please Review and Try Again`r" -Color "Red"
         }
     }
 })
@@ -1071,13 +1013,13 @@ $TerminateReconnectButton.Add_Click({
 
 $RemoveGoButton.Add_Click({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
         Set-Comboboxes
     }
     Try{
-        Get-Mailbox -ErrorAction Stop | Out-Null
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
@@ -1095,14 +1037,14 @@ $RemoveGoButton.Add_Click({
 
         #Block Sign In Of User/Force Sign Out Within 60 Minutes
         Set-AzureADUser -ObjectID $UserInfo.ObjectId -AccountEnabled $false
-        Write-RemoveRichTextBox("Sign in Blocked for $($UserInfo.ObjectID)`r")
+        Write-RichtextBox -TextBox $RemoveRichTextBox -Text "Sign in Blocked for $($UserInfo.ObjectID)`r"
 
         #Remove All Group Memberships
         $memberships = Get-AzureADUserMembership -ObjectId $username | Where-Object {$_.ObjectType -ne "Role"}| Select-Object DisplayName,ObjectId
         foreach ($membership in $memberships) { 
                 $group = Get-AzureADMSGroup -ID $membership.ObjectId
                 if ($group.GroupTypes -contains 'DynamicMembership') {
-                    Write-RemoveRichTextBox("Skipped $($group.Displayname) as it is dynamic`r") -Color "Yellow"
+                    Write-RichtextBox -TextBox $RemoveRichTextBox -Text "Skipped $($group.Displayname) as it is dynamic`r" -Color "Yellow"
                 }
                 else{
                     Try{
@@ -1112,17 +1054,17 @@ $RemoveGoButton.Add_Click({
                         if ($_.Exception.ErrorContent.Message.Value) {
                             $message = $_.Exception.ErrorContent.Message.Value
                         }
-                        Write-RemoveRichTextBox("Could not remove from group $($group.name).  Error:  $message`r") -color "Yellow"
+                        Write-RichtextBox -TextBox $RemoveRichTextBox -Text "Could not remove from group $($group.name).  Error:  $message`r" -Color "Yellow"
                     }
              
                 }
             }
-        Write-RemoveRichTextBox("All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination`r")
+            Write-RichtextBox -TextBox $RemoveRichTextBox -Text "All non-dynamic groups removed, please check your Downloads folder for the file, it will also open automatically at end of user termination`r"
 
         #Convert To Shared Mailbox And Hide From GAL When Convert Is Selected, Must Be Done Before Removing Licenses
         if ($ConvertCheckBox.IsChecked -eq $true) {
             Set-Mailbox $username -Type Shared -HiddenFromAddressListsEnabled $true
-            Write-RemoveRichTextBox("Mailbox for $username converted to Shared, address hidden from GAL`r")
+            Write-RichtextBox -TextBox $RemoveRichTextBox -Text "Mailbox for $username converted to Shared, address hidden from GAL`r"
         }
 
         #Grant Access To Shared Mailbox When Grant CheckBox Is Selected
@@ -1131,10 +1073,10 @@ $RemoveGoButton.Add_Click({
             if($sharedMailboxUser){
                Add-MailboxPermission -Identity $username -User $SharedMailboxUser -AccessRights FullAccess -InheritanceType All
                 Add-RecipientPermission -Identity $username -Trustee $SharedMailboxUser -AccessRights SendAs -Confirm:$False
-                Write-RemoveRichTextBox("Access granted to the $username Shared Mailbox to $sharedMailboxUser`r")
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "Access granted to the $username Shared Mailbox to $sharedMailboxUser`r"
             }
             else{
-                Write-RemoveRichTextBox("Cancelled Sharing of Mailbox`r") -Color "Red"
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "Cancelled Sharing of Mailbox`r" -Color "Red"
             }
         }
 
@@ -1145,7 +1087,7 @@ $RemoveGoButton.Add_Click({
                 $licenses.RemoveLicenses = $UserInfo.assignedlicenses.SkuId
                 Set-AzureADUserLicense -ObjectId $UserInfo.ObjectId -AssignedLicenses $licenses
             }
-            Write-RemoveRichTextBox("All licenses have been removed`r")
+            Write-RichtextBox -TextBox $RemoveRichTextBox -Text "All licenses have been removed`r"
         }
 
         #Test And Connect To Sharepoint Online If Needed
@@ -1158,7 +1100,7 @@ $RemoveGoButton.Add_Click({
                 Try{
                     Connect-SPOService -Url $AdminSiteURL
                 }Catch{
-                    Write-RemoveRichTextBox "SharePointOnline Could Not Connect"
+                    Write-RichtextBox -TextBox $RemoveRichTextBox -Text "SharePointOnline Could Not Connect" -Color "Red"
                     Break
                 }
             }
@@ -1171,7 +1113,7 @@ $RemoveGoButton.Add_Click({
             $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
             #Add User Receiving Access To Terminated User's OneDrive
             Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
-            Write-RemoveRichTextBox("OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r")
+            Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r"
         }
         #Share OneDrive With Different User(s) than Shared Mailbox
         elseif ($OneDriveDifferentRadioButton.IsChecked) {
@@ -1183,9 +1125,9 @@ $RemoveGoButton.Add_Click({
                 $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
                 #Add User Receiving Access To Terminated User's OneDrive
                 Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
-                Write-RemoveRichTextBox("OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r")
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
             }else{
-                Write-RemoveRichTextBox "OneDrive Share Cancelled"
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text  "OneDrive Share Cancelled" -Color "Red"
             }
         }
 
@@ -1225,7 +1167,7 @@ $ShareMailboxCheckBox.Add_Unchecked({
 
 $UserForm.Add_Loaded({
     Try{
-        Get-AzureADUser -ErrorAction Stop | Out-Null
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-AzureAD
     }
