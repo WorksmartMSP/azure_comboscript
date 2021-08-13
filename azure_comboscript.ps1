@@ -19,13 +19,9 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 ### Start XAML and Reader to use WPF, as well as declare variables for use
 [xml]$xaml = @"
 <Window
-
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-
   Title="Azure Comboscript" Height="526.201" Width="525" ResizeMode="NoResize">
-
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -175,7 +171,6 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
             </TabItem>
         </TabControl>
     </Grid>
-
 </Window>
 "@
 
