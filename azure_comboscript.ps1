@@ -196,7 +196,7 @@ Function Write-RichTextBox {
         $TextBox.Document.ContentEnd,$TextBox.Document.ContentEnd ) 
     $RichTextRange.Text = $Text
     $RichTextRange.ApplyPropertyValue( ( [System.Windows.Documents.TextElement]::ForegroundProperty ), $Color )
-    $TextBox.ScrollToEnd()  
+    $TextBox.ScrollToEnd()
 }
 
 Function Set-Comboboxes {
@@ -438,7 +438,6 @@ $PasswordGoButton.Add_Click({
         }
 
         Write-RichtextBox -TextBox $PasswordRichTextBox -Text "SUCCESS:  $($UserTextBox.Text)'s password has been reset to $($PasswordTextBox.Text)`r"
-        $PasswordRichTextBox.ScrollToEnd()
         $UserTextbox.Text = ""
         $PasswordTextBox.Text = ""
     }Catch{
@@ -447,12 +446,7 @@ $PasswordGoButton.Add_Click({
             $message = $_.Exception.ErrorContent.Message.Value
         }
         Write-RichtextBox -TextBox $PasswordRichTextBox -Text "$message`rFAILURE:  Please review above and try again`r" -Color "Red"
-        $PasswordRichTextBox.ScrollToEnd()
     }
-})
-
-$PasswordRichTextBox.Add_TextChanged({
-    $PasswordRichTextBox.ScrollToEnd()
 })
 ### End Password Tab Functionality
 
@@ -526,10 +520,6 @@ $MailboxGoButton.Add_Click({
     }else{
         Write-RichtextBox -TextBox $MailboxRichTextBox -Text "No User Selected" -Color "Red"
     }
-})
-
-$MailboxRichTextBox.Add_TextChanged({
-    $MailboxRichTextBox.ScrollToEnd()
 })
 ### End Mailbox Tab Functionality
 
@@ -617,10 +607,6 @@ $GroupRemoveButton.Add_Click({
     }else{
         Write-RichtextBox -TextBox $GroupRichTextBox -Text "User Selection Cancelled" -Color "Red"
     }
-})
-
-$GroupRichTextBox.Add_TextChanged({
-    $GroupRichTextBox.ScrollToEnd()
 })
 ### End Group Tab Functionality
 
@@ -826,10 +812,6 @@ $CalendarGoButton.Add_Click({
         }
     }
 })
-
-$CalendarRichTextBox.Add_TextChanged({
-    $CalendarRichTextBox.ScrollToEnd()
-})
 ### End Calendar Tab Functionality
 
 
@@ -990,10 +972,6 @@ $CreateGoButton.Add_Click({
         }
     }
 })
-
-$CreateRichTextBox.Add_TextChanged({
-    $CreateRichTextBox.ScrollToEnd()
-})
 ### End User Creation Tab Functionality
 
 ### Start User Termination Tab Functionality
@@ -1135,10 +1113,6 @@ $RemoveGoButton.Add_Click({
         #Open Created CSV File At End Of Loop For Ease Of Copying OneDrive URL To Give
         Start-Process c:\users\$env:USERNAME\Downloads\$(get-date -f yyyy-MM-dd)_info_on_$username.csv
     }
-})
-
-$RemoveRichTextBox.Add_TextChanged({
-    $RemoveRichTextBox.ScrollToEnd()
 })
 
 $ConvertCheckbox.Add_Checked({
