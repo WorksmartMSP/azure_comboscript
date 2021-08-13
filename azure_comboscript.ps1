@@ -179,7 +179,8 @@ Try{
     $UserForm = [Windows.Markup.XamlReader]::Load($reader)
 }
 Catch{
-    Write-Host "Unable to load Windows.Markup.XamlReader.  Some possible causes for this problem include: .NET Framework is missing PowerShell must be launched with PowerShell -sta, invalid XAML code was encountered."    Exit
+    Write-Host "Unable to load Windows.Markup.XamlReader.  Some possible causes for this problem include: .NET Framework is missing, PowerShell must be launched with PowerShell -sta, invalid XAML code was encountered."
+    Exit
 }
 
 #Create Variables For Use In Script Automatically
