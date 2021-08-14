@@ -19,9 +19,12 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 ### Start XAML and Reader to use WPF, as well as declare variables for use
 [xml]$xaml = @"
 <Window
-  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  Title="Azure Comboscript" Height="526.201" Width="525" ResizeMode="NoResize">
+
+  Title="Touch Users" Height="526.201" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
+
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -108,10 +111,11 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         <FlowDocument/>
                     </RichTextBox>
                     <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" Height="57" Width="473"/>
-                    <Button Name="CalendarUserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="230"/>
-                    <Button Name="CalendarButton" Content="Pick Calendar" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="230"/>
-                    <TextBox Name="CalendarUserTextBox" HorizontalAlignment="Left" Height="20" Margin="245,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" Background="#FFC8C8C8" IsReadOnly="True"/>
-                    <TextBox Name="CalendarTextBox" HorizontalAlignment="Left" Height="20" Margin="245,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" Background="#FFC8C8C8" IsReadOnly="True"/>
+                    <Button Name="CalendarUserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="65"/>
+                    <Button Name="CalendarButton" Content="Pick Calendar" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="128"/>
+                    <TextBox Name="CalendarUserTextBox" HorizontalAlignment="Left" Height="20" Margin="143,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="340" Background="#FFC8C8C8" IsReadOnly="True"/>
+                    <TextBox Name="CalendarTextBox" HorizontalAlignment="Left" Height="20" Margin="143,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="340" Background="#FFC8C8C8" IsReadOnly="True"/>
+                    <CheckBox Name="CalendarDefaultCheckbox" Content="Default" HorizontalAlignment="Left" Margin="80,38,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
@@ -171,6 +175,7 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
             </TabItem>
         </TabControl>
     </Grid>
+
 </Window>
 "@
 
@@ -624,6 +629,16 @@ $CalendarReconnectButton.Add_Click({
     Set-Comboboxes
 })
 
+$CalendarDefaultCheckbox.Add_Checked({
+    $CalendarUserButton.IsEnabled = $false
+    $CalendarUserTextBox.Text = "Default"
+})
+
+$CalendarDefaultCheckbox.Add_Unchecked({
+    $CalendarUserButton.IsEnabled = $true
+    $CalendarUserTextbox.Text = ""
+})
+
 $CalendarUserButton.Add_Click({
     Try{
         Get-AzureADDomain -ErrorAction Stop | Out-Null
@@ -642,8 +657,9 @@ $CalendarButton.Add_Click({
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
-    $TempCalendar = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select Calendar" -OutputMode Single
-    $CalendarTextBox.Text = $TempCalendar.UserPrincipalName + ":\calendar"
+    $TempCalendarUser = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select Calendar" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
+    $TempCalendar = Get-MailboxFolderStatistics $TempCalendarUser | Where-Object {($_.folderpath -match 'Calendar') -and ($_.folderpath -notmatch 'Logging')}| Select-Object Name,Identity,folderpath,foldertype | Out-GridView -Title "Please select a Calendar" -OutputMode Single | Select-Object -ExpandProperty Identity
+    $CalendarTextBox.Text = $TempCalendar -replace '^(.*?)\\(.*)','$1:\$2'
 })
 
 $CalendarGoButton.Add_Click({
