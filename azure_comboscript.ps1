@@ -1,4 +1,4 @@
-Add-Type -AssemblyName 'System.Web'
+Add-Type -AssemblyName System.Web
 Add-Type -AssemblyName PresentationFramework
 
 # Test For Modules
@@ -39,15 +39,16 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False" TabIndex="0"/>
                     <TextBox Name="UserTextBox" HorizontalAlignment="Left" Height="23" Margin="258,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="UserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
-                    <Label Content="Enter Password Below, Go Button Activates At Once Password And User Are Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
-                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="185" Margin="10,209,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
+                    <Label Content="Enter Password Below, Go Button Activates Once Password And User Are Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
+                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="154" Margin="10,240,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
-                    <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="473"/>
+                    <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="473"/>
                     <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
-                    <Button Name="RandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="304,163,0,0" VerticalAlignment="Top" Width="180"/>
-                    <Slider Name="PasswordLengthSlider" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="169" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
-                    <TextBox Name="PasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="179,160,0,0" TextWrapping="Wrap" Text="{Binding ElementName=PasswordLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+                    <Button Name="RandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="213,191,0,0" VerticalAlignment="Top" Width="270" Height="24"/>
+                    <Slider Name="PasswordLengthSlider" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="169" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
+                    <TextBox Name="PasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="184,191,0,0" TextWrapping="Wrap" Text="{Binding ElementName=PasswordLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="24" IsReadOnly="True"/>
+                    <Label Content="Select Length Of Password For Random Generation If Desired" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Width="473"/>
                 </Grid>
             </TabItem>
             <TabItem Name="MailboxTab" Header="Mailboxes">
@@ -147,11 +148,14 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="300" Height="100" IsEnabled="False" TabIndex="11"/>
+                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,335,0,0" VerticalAlignment="Top" Width="300" Height="42" IsEnabled="False" TabIndex="11"/>
                     <Label Content="Country" HorizontalAlignment="Left" Margin="343,159,0,0" VerticalAlignment="Top"/>
                     <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="9"/>
                     <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="26"/>
                     <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top" TabIndex="6"/>
+                    <Slider Name="CreatePasswordLengthSlider" HorizontalAlignment="Left" Margin="183,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="160" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
+                    <TextBox Name="CreatePasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="348,306,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=CreatePasswordLengthSlider, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="24" IsReadOnly="True"/>
+                    <Button Name="CreateRandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="189" Height="24"/>
                 </Grid>
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
@@ -444,8 +448,7 @@ $UserButton.Add_Click({
 })
 
 $RandomPasswordButton.Add_Click({
-    Clear-Variable Password -ErrorAction SilentlyContinue
-    $PasswordTextBox.Text = [System.Web.Security.Membership]::GeneratePassword($PasswordLengthTextbox.Text,($PasswordLengthTextbox.Text/2))
+    $PasswordTextBox.Text = [System.Web.Security.Membership]::GeneratePassword($PasswordLengthSlider.Value,($PasswordLengthSlider.Value/2))
 })
 
 $PasswordGoButton.Add_Click({
@@ -883,6 +886,10 @@ $CreateReconnectButton.Add_Click({
     Connect-AzureAD
     Connect-ExchangeOnline -ShowBanner:$false
     Set-Comboboxes
+})
+
+$CreateRandomPasswordButton.Add_Click({
+    $CreatePasswordTextBox.Text = [System.Web.Security.Membership]::GeneratePassword($CreatePasswordLengthSlider.Value,($CreatePasswordLengthSlider.Value/2))
 })
 
 $CreateGoButton.Add_Click({
