@@ -1,3 +1,4 @@
+Add-Type -AssemblyName 'System.Web'
 Add-Type -AssemblyName PresentationFramework
 
 # Test For Modules
@@ -19,7 +20,8 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 ### Start XAML and Reader to use WPF, as well as declare variables for use
 [xml]$xaml = @"
 <Window
-xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
@@ -37,12 +39,15 @@ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False" TabIndex="0"/>
                     <TextBox Name="UserTextBox" HorizontalAlignment="Left" Height="23" Margin="258,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="UserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
-                    <Label Content="Enter Password Below, Go Button Activates At 8 Characters and User Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
-                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="214" Margin="10,180,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
+                    <Label Content="Enter Password Below, Go Button Activates At Once Password And User Are Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
+                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="185" Margin="10,209,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
-                    <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="461"/>
+                    <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="473"/>
                     <Button Name="PasswordReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="258,10,0,0" VerticalAlignment="Top" Width="225" Height="25"/>
+                    <Button Name="RandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="304,163,0,0" VerticalAlignment="Top" Width="180"/>
+                    <Slider Name="PasswordLengthSlider" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="169" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
+                    <TextBox Name="PasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="179,160,0,0" TextWrapping="Wrap" Text="{Binding ElementName=PasswordLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
                 </Grid>
             </TabItem>
             <TabItem Name="MailboxTab" Header="Mailboxes">
@@ -151,26 +156,31 @@ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
                 <Grid Background="#FFE5E5E5">
-                    <Label Content="Please Select Options Below for User Termination and press Terminate User.  You will&#xD;&#xA;be prompted to select a user and who to share to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="43"/>
-                    <GroupBox Header="Share OneDrive?" HorizontalAlignment="Left" Height="80" Margin="243,113,0,0" VerticalAlignment="Top" Width="240">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="176*"/>
+                        <ColumnDefinition Width="317*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Please Select Options Below for User Termination and press Terminate User.  You will&#xD;&#xA;be prompted to select a user and who to share to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="43" Grid.ColumnSpan="2"/>
+                    <GroupBox Header="Share OneDrive?" HorizontalAlignment="Left" Height="92" Margin="67,113,0,0" VerticalAlignment="Top" Width="240" Grid.Column="1">
                         <StackPanel HorizontalAlignment="Left" Height="74" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="281">
                             <RadioButton Name="OneDriveNoRadioButton" Content="No" TabIndex="3"/>
                             <RadioButton Name="OneDriveSameRadioButton" Content="To Same User As Shared Mailbox" IsChecked="True" TabIndex="4"/>
                             <RadioButton Name="OneDriveDifferentRadioButton" Content="To Different User As Shared Mailbox" TabIndex="5"/>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Standard Options" HorizontalAlignment="Left" Height="80" Margin="10,113,0,0" VerticalAlignment="Top" Width="228">
+                    <GroupBox Header="Standard Options" HorizontalAlignment="Left" Height="92" Margin="10,113,0,0" VerticalAlignment="Top" Width="228" Grid.ColumnSpan="2">
                         <StackPanel HorizontalAlignment="Left" Height="74" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="208">
                             <CheckBox Name="ConvertCheckbox" Content="Convert to Shared Mailbox?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="0"/>
                             <CheckBox Name="RemoveLicensesCheckbox" Content="Remove All Licenses?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="1"/>
                             <CheckBox Name="ShareMailboxCheckbox" Content="Share the Mailbox?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="2"/>
+                            <CheckBox Name="ResetMFACheckbox" Content="Reset MFA?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="2"/>
                         </StackPanel>
                     </GroupBox>
-                    <Button Name="RemoveGoButton" Content="Terminate User" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="473" Height="52"/>
-                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="194" Margin="10,198,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Button Name="RemoveGoButton" Content="Terminate User" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="473" Height="52" Grid.ColumnSpan="2"/>
+                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="182" Margin="10,210,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50" Grid.ColumnSpan="2"/>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -431,6 +441,11 @@ $UserButton.Add_Click({
 
     $tempuser = Get-AzureADUser -all $true | Out-GridView -Title "Please Select A User" -Outputmode Single
     $UserTextBox.Text = $tempuser.UserPrincipalName
+})
+
+$RandomPasswordButton.Add_Click({
+    Clear-Variable Password -ErrorAction SilentlyContinue
+    $PasswordTextBox.Text = [System.Web.Security.Membership]::GeneratePassword($PasswordLengthTextbox.Text,($PasswordLengthTextbox.Text/2))
 })
 
 $PasswordGoButton.Add_Click({
