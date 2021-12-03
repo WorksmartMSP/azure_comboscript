@@ -148,14 +148,16 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,335,0,0" VerticalAlignment="Top" Width="300" Height="42" IsEnabled="False" TabIndex="11"/>
+                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,336,0,0" VerticalAlignment="Top" Width="300" Height="41" IsEnabled="False" TabIndex="11"/>
                     <Label Content="Country" HorizontalAlignment="Left" Margin="343,159,0,0" VerticalAlignment="Top"/>
                     <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="9"/>
                     <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="26"/>
                     <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top" TabIndex="6"/>
-                    <Slider Name="CreatePasswordLengthSlider" HorizontalAlignment="Left" Margin="183,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="160" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
-                    <TextBox Name="CreatePasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="348,306,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=CreatePasswordLengthSlider, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="24" IsReadOnly="True"/>
-                    <Button Name="CreateRandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="189" Height="24"/>
+                    <Slider Name="CreatePasswordLengthSlider" HorizontalAlignment="Left" Margin="183,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="126" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
+                    <TextBox Name="CreatePasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="314,304,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=CreatePasswordLengthSlider, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="24" IsReadOnly="True"/>
+                    <Button Name="CreateRandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="155" Height="24"/>
+                    <Label Content="CustomAttribute2" HorizontalAlignment="Left" Margin="343,277,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute2Textbox" HorizontalAlignment="Left" Height="23" Margin="343,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
                 </Grid>
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
@@ -981,6 +983,10 @@ $CreateGoButton.Add_Click({
                 MailboxExistCheck($UPN)
                 Set-Mailbox $UPN -CustomAttribute1 $CustomAttribute1Textbox.Text
             }
+            if([string]::IsNullOrWhiteSpace($CustomAttribute2Textbox.Text) -eq $false){
+                MailboxExistCheck($UPN)
+                Set-Mailbox $UPN -CustomAttribute2 $CustomAttribute2Textbox.Text
+            }
         
             $user = Get-AzureADUser -ObjectID $UPN
             MailboxExistCheck($UPN)
@@ -995,7 +1001,22 @@ $CreateGoButton.Add_Click({
             else {
                 Write-RichtextBox -TextBox $CreateRichTextBox -Text "No Groups Selected`r" -Color "Yellow"
             }
+
+            $ExchangeGroups = Get-DistributionGroup | Select-Object DisplayName,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -Property Displayname,ID
+            if ($ExchangeGroups){
+                foreach($ExchangeGroup in $ExchangeGroups){
+                    Add-DistributionGroupMember -Identity $ExchangeGroup.ID -Member $user.ObjectID
+                    Write-RichtextBox -TextBox $CreateRichTextBox -Text "Added $($user.DisplayName) to $($ExchangeGroup.DisplayName)`r"
+                }
+                
+            }
+            else {
+                Write-RichtextBox -TextBox $CreateRichTextBox -Text "No Groups Selected`r" -Color "Yellow"
+            }
+
+
             Write-RichtextBox -TextBox $CreateRichTextBox -Text "User created for $($firstnameTextbox.Text) $($lastnameTextbox.Text)`r"
+            $CustomAttribute2Textbox.Text = ""
             $CustomAttribute1Textbox.Text = ""
             $cityTextbox.Text = ""
             $stateTextbox.Text = ""
