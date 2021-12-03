@@ -84,11 +84,13 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </Grid.ColumnDefinitions>
                     <Button Name="GroupReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                     <Label Content="--When you click Add, you may select multiple users by holding control.  The same&#xD;&#xA;applies to the groups, but it will impact ALL the users you have selected. Please use&#xD;&#xA;caution if you have multiple users with different needed groups.&#xD;&#xA;--When you click Remove, you may select multiple users by holding control.  Groups&#xD;&#xA;work a bit differently, as it will check each user and provide you a prompt to remove&#xD;&#xA;groups based on their membership(s), so you will have to select group(s) for each user." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="111" Width="473"/>
-                    <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
-                    <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="100"/>
+                    <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,399,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
                     <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="168" Margin="10,176,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
+                    <Button Name="ExchangeGroupRemoveButton" Content="Remove User(s) from  Exchange Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="ExchangeGroupAddButton" Content="Add User(s) to Exchange Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CalendarTab" Header="Calendars">
@@ -551,7 +553,6 @@ $MailboxGoButton.Add_Click({
 
 ### Start Group Tab Functionality
 $GroupReconnectButton.Add_Click({
-    Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
     Try{
         Disconnect-SPOService -ErrorAction SilentlyContinue
     }
@@ -559,7 +560,91 @@ $GroupReconnectButton.Add_Click({
         #Do Nothing If Not Connected to SPO, Not Needed For Groups
     }
     Connect-AzureAD
+    Connect-ExchangeOnline -ShowBanner:$false
     Set-Comboboxes
+})
+
+$ExchangeGroupAddButton.Add_Click({
+    Try{
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
+    }
+    Catch{
+        Connect-AzureAD        
+        Set-Comboboxes
+    }
+    Try{
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
+    }
+    Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
+
+    Clear-Variable Users -ErrorAction SilentlyContinue
+    Clear-Variable ExchangeGroups -ErrorAction SilentlyContinue
+    
+    $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
+    if($Users){
+        $ExchangeGroups = Get-DistributionGroup | Select-Object DisplayName,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -Property Displayname,ID
+        if ($ExchangeGroups){
+            foreach($User in $Users){
+                foreach($Group in $Groups){
+                    Add-DistributionGroupMember -Identity $ExchangeGroup.ID -Member $user.ObjectID
+                    Write-RichtextBox -TextBox $GroupRichTextBox -Text "Added $($user.DisplayName) to $($ExchangeGroup.DisplayName)`r"
+                }
+            }
+        }else{
+            Write-RichtextBox -TextBox $GroupRichTextBox -Text "Group Selection Cancelled`r" -Color "Red"
+        }
+    }else{
+        Write-RichtextBox -TextBox $GroupRichTextBox -Text "User Selection Cancelled`r" -Color "Red"
+    }    
+})
+
+$ExchangeGroupRemoveButton.Add_Click({
+    Try{
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
+    }
+    Catch{
+        Connect-AzureAD        
+        Set-Comboboxes
+    }
+    Try{
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
+    }
+    Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
+
+    Clear-Variable Users -ErrorAction SilentlyContinue
+    Clear-Variable ExchangeGroups -ErrorAction SilentlyContinue
+
+    $Users = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Out-GridView -Title "Select User - Hold Ctrl for Multiple" -PassThru
+    if($Users){
+        foreach($User in $Users){
+            $ExchangeGroups = Get-DistributionGroup | Select-Object DisplayName,Id | Sort-Object DisplayName | Out-GridView -Passthru -Title "Hold Ctrl to select multiple groups" | Select-Object -Property Displayname,ID
+            if($ExchangeGroups){
+                foreach ($ExchangeGroup in $ExchangeGroups) { 
+                    Try
+                    {
+                        Remove-DistributionGroupMember -ObjectId $ExchangeGroup.Id -MemberId $User.ObjectId
+                        Write-RichtextBox -TextBox $GroupRichTextBox -Text "Removed $($user.Displayname) from $($ExchangeGroup.Displayname)`r"
+                    }
+                    catch
+                    {
+                        $message = $_.Exception.Message
+                        if ($_.Exception.ErrorContent.Message.Value) {
+                            $message = $_.Exception.ErrorContent.Message.Value
+                        }
+                        Write-RichtextBox -TextBox $GroupRichTextBox -Text "Could not remove from group $($ExchangeGroup.Displayname).  Error:  $message)`r" -Color "Red"
+                    }
+                }
+            }else{
+                Write-RichtextBox -TextBox $GroupRichTextBox -Text "Group Selection Cancelled" -Color "Red"
+            }
+        }
+    }else{
+        Write-RichtextBox -TextBox $GroupRichTextBox -Text "User Selection Cancelled" -Color "Red"
+    }
 })
 
 $GroupAddButton.Add_Click({
