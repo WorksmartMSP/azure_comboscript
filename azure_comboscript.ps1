@@ -370,6 +370,7 @@ $SkuToFriendly = @{
     "6a0f6da5-0b87-4190-a6ae-9bb5a2b9546a" = "WINDOWS 10 ENTERPRISE E3"
     "488ba24a-39a9-4473-8ee5-19291e71b002" = "Windows 10 Enterprise E5"
     "6470687e-a428-4b7a-bef2-8a291ad947c9" = "WINDOWS STORE FOR BUSINESS"
+    "aa2695c9-8d59-4800-9dc8-12e01f1735af" = "NONPROFIT_PORTAL"
 }
 #Usage Location Lookup Table
 $UsageLocations=@{
