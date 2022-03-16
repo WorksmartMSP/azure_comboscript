@@ -126,6 +126,21 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <CheckBox Name="CalendarDefaultCheckbox" Content="Default" HorizontalAlignment="Left" Margin="80,38,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
+            <TabItem Name="OneDriveTab" Header="OneDrive" Margin="-2,-2,0,0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Click Pick OneDrive to select the OneDrive to be shared.  This may take longer than usual as&#xD;&#xA;it must pull ALL users, not just active ones.  The Share OneDrive will then activate and&#xD;&#xA;allow you to select the user to grant access to the chosen OneDrive folder." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="60"/>
+                    <Button Name="OneDriveGoButton" Content="Share OneDrive" HorizontalAlignment="Left" Margin="10,397,0,-10" VerticalAlignment="Top" Width="473" Height="52" IsEnabled="False"/>
+                    <RichTextBox Name="OneDriveRichTextBox" HorizontalAlignment="Left" Height="208" Margin="10,189,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <FlowDocument/>
+                    </RichTextBox>
+                    <Button Name="OneDriveReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <TextBox Name="OneDriveUserTextbox" HorizontalAlignment="Left" Height="23" Margin="258,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
+                    <Button Name="OneDriveButton" Content="Pick OneDrive" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
+                </Grid>
+            </TabItem>
             <TabItem Name="CreateTab" Header="Create User">
                 <Grid Background="#FFE5E5E5">
                     <Label Content="First Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="67"/>
@@ -936,7 +951,61 @@ $CalendarGoButton.Add_Click({
 })
 ### End Calendar Tab Functionality
 
+### Start OneDrive Tab Functionality
+$OneDriveReconnectButton.Add_Click({
+    Disconnect-ExchangeOnline -Confirm:$false -InformationAction Ignore -ErrorAction SilentlyContinue
+    Connect-AzureAD
+    $domainPrefix = ((Get-AzureADDomain | Where-Object Name -match "\.onmicrosoft\.com")[0].Name -split '\.')[0]
+    $AdminSiteUrl = "https://$domainPrefix-admin.sharepoint.com"
+    Connect-SPOService -Url $AdminSiteURL
+    Set-Comboboxes
+})
 
+$OneDriveButton.Add_Click({
+    Clear-Variable tempuser -ErrorAction -SilentlyContinue
+    $tempuser = Get-AzureADUser -all $true | Out-GridView -Title "Please Select A User" -Outputmode Single
+    $OneDriveUserTextBox.Text = $tempuser.UserPrincipalName
+})
+
+$OneDriveUserTextbox.Add_TextChanged({
+    if ($OneDriveUserTextbox.Text.Length -ge 2){
+        $OneDriveGoButton.IsEnabled = $true
+    }
+    else{
+        $OneDriveGoButton.IsEnabled = $false
+    }
+})
+
+$OneDriveButtonGo.Add_Click({
+    Try{
+        Get-AzureADDomain -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-AzureAD
+        Set-Comboboxes
+    }
+    Try{
+        Get-SPOHomeSite -ErrorAction  Stop | Out-Null
+    }
+    Catch{
+        $domainPrefix = ((Get-AzureADDomain | Where-Object Name -match "\.onmicrosoft\.com")[0].Name -split '\.')[0]
+        $AdminSiteUrl = "https://$domainPrefix-admin.sharepoint.com"
+        Connect-SPOService -Url $AdminSiteURL
+    }
+
+    Clear-Variable SharedOneDriveUser -Erroraction SilentlyContinue
+    $SharedOneDriveUser = $allusers.Values | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
+    #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
+    if($SharedOneDriveUser){
+        $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($OneDriveUserTextbox.Text)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
+        #Add User Receiving Access To Terminated User's OneDrive
+        Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
+        Write-RichtextBox -TextBox $OneDriveRichTextBox -Text "$($OneDriveUserTextBox.Text)'s OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
+        $OneDriveUserTextbox.Text = ""
+    }else{
+        Write-RichtextBox -TextBox $OneDriveRichTextBox -Text  "OneDrive Share Cancelled" -Color "Red"
+    }
+})
+### End OneDrive Tab Functionality
 
 ### Start User Creation Tab Functionality
 $firstnameTextbox.Add_TextChanged({
