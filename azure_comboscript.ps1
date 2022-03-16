@@ -963,7 +963,7 @@ $OneDriveReconnectButton.Add_Click({
 })
 
 $OneDriveButton.Add_Click({
-    Clear-Variable tempuser -ErrorAction -SilentlyContinue
+    Clear-Variable tempuser -ErrorAction SilentlyContinue
     $tempuser = Get-AzureADUser -all $true | Out-GridView -Title "Please Select A User" -Outputmode Single
     $OneDriveUserTextBox.Text = $tempuser.UserPrincipalName
 })
@@ -985,7 +985,7 @@ $OneDriveGoButton.Add_Click({
         Set-Comboboxes
     }
     Try{
-        Get-SPOHomeSite -ErrorAction  Stop | Out-Null
+        Get-SPOHomeSite -ErrorAction Stop | Out-Null
     }
     Catch{
         $domainPrefix = ((Get-AzureADDomain | Where-Object Name -match "\.onmicrosoft\.com")[0].Name -split '\.')[0]
