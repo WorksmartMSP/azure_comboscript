@@ -977,7 +977,7 @@ $OneDriveUserTextbox.Add_TextChanged({
     }
 })
 
-$OneDriveButtonGo.Add_Click({
+$OneDriveGoButton.Add_Click({
     Try{
         Get-AzureADDomain -ErrorAction Stop | Out-Null
     }Catch{
