@@ -25,13 +25,13 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
-  Title="Touch Users" Height="535" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
+  Title="Touch Users" Height="550" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
 
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="500" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
+        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="515" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Name="ResetTab" Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
                     <Label Content="Please Pick A User, Then Enter A Password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="243"/>
@@ -994,7 +994,7 @@ $OneDriveGoButton.Add_Click({
     }
 
     Clear-Variable SharedOneDriveUser -Erroraction SilentlyContinue
-    $SharedOneDriveUser = $allusers.Values | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
+    $SharedOneDriveUser = Get-AzureADUser -All $true | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
     #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
     if($SharedOneDriveUser){
         $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($OneDriveUserTextbox.Text)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
