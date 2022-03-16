@@ -25,13 +25,13 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
-  Title="Touch Users" Height="526.201" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
+  Title="Touch Users" Height="535" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
 
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="487" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
+        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="500" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Name="ResetTab" Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
                     <Label Content="Please Pick A User, Then Enter A Password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="243"/>
