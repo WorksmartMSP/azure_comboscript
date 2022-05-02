@@ -25,22 +25,22 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
 
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
-  Title="Touch Users" Height="550" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
+  Title="Touch Users" Height="600" Width="525" ResizeMode="NoResize" WindowStyle="ThreeDBorderWindow">
 
     <Grid ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="515" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
+        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="565" Margin="10,0,0,0" VerticalAlignment="Top" Width="499">
             <TabItem Name="ResetTab" Header="Reset Password">
                 <Grid Background="#FFE5E5E5">
                     <Label Content="Please Pick A User, Then Enter A Password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="25" Width="243"/>
                     <TextBox Name="PasswordTextBox" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" TabIndex="1"/>
-                    <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False" TabIndex="0"/>
+                    <Button Name="PasswordGoButton" Content="Go" HorizontalAlignment="Left" Margin="10,457,0,0" VerticalAlignment="Top" Width="473" Height="50" IsEnabled="False" TabIndex="0"/>
                     <TextBox Name="UserTextBox" HorizontalAlignment="Left" Height="23" Margin="258,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="UserButton" Content="Pick User" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
                     <Label Content="Enter Password Below, Go Button Activates Once Password And User Are Selected" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="473"/>
-                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="154" Margin="10,240,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
+                    <RichTextBox Name="PasswordRichTextBox" HorizontalAlignment="Left" Height="212" Margin="10,240,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
                         <FlowDocument/>
                     </RichTextBox>
                     <CheckBox Name="PasswordResetCheckbox" Content="Force Reset of Password on Login?" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.221,-1.703" Width="473"/>
@@ -58,8 +58,8 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </Grid.ColumnDefinitions>
                     <Button Name="MailboxReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                     <Label Content="Pick a Mailbox to apply permissions to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="28" Width="473"/>
-                    <Button Name="MailboxGoButton" Content="Set Mailbox Permissions For User(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="105" Margin="10,289,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
+                    <Button Name="MailboxGoButton" Content="Set Mailbox Permissions For User(s)" HorizontalAlignment="Left" Margin="10,457,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="163" Margin="10,289,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="MailboxButton" Content="Pick Mailbox" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" Width="231" Height="50"/>
@@ -84,13 +84,13 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     </Grid.ColumnDefinitions>
                     <Button Name="GroupReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                     <Label Content="--When you click Add, you may select multiple users by holding control.  The same&#xD;&#xA;applies to the groups, but it will impact ALL the users you have selected. Please use&#xD;&#xA;caution if you have multiple users with different needed groups.&#xD;&#xA;--When you click Remove, you may select multiple users by holding control.  Groups&#xD;&#xA;work a bit differently, as it will check each user and provide you a prompt to remove&#xD;&#xA;groups based on their membership(s), so you will have to select group(s) for each user." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="111" Width="473"/>
-                    <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,399,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
-                    <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,399,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
-                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="168" Margin="10,176,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Button Name="GroupRemoveButton" Content="Remove User(s) from Group(s)" HorizontalAlignment="Left" Margin="253,457,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="GroupAddButton" Content="Add User(s) to Group(s)" HorizontalAlignment="Left" Margin="10,457,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <RichTextBox Name="GroupRichTextBox" HorizontalAlignment="Left" Height="221" Margin="10,176,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="ExchangeGroupRemoveButton" Content="Remove User(s) from  Exchange Group(s)" HorizontalAlignment="Left" Margin="253,349,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
-                    <Button Name="ExchangeGroupAddButton" Content="Add User(s) to Exchange Group(s)" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="ExchangeGroupRemoveButton" Content="Remove User(s) from  Exchange Group(s)" HorizontalAlignment="Left" Margin="253,402,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="ExchangeGroupAddButton" Content="Add User(s) to Exchange Group(s)" HorizontalAlignment="Left" Margin="10,402,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
                 </Grid>
             </TabItem>
             <TabItem Name="CalendarTab" Header="Calendars">
@@ -114,8 +114,8 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                             <RadioButton Name="LimitedDetailsRadioButton" Content="Limited Details - Availability + Subject and Location" Margin="123,120,10,42"/>
                         </Grid>
                     </GroupBox>
-                    <Button Name="CalendarGoButton" Content="Update User's Permissions on Calendar" HorizontalAlignment="Left" Margin="10,424,0,0" VerticalAlignment="Top" Width="473" Height="25"/>
-                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="95" Margin="10,324,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Button Name="CalendarGoButton" Content="Update User's Permissions on Calendar" HorizontalAlignment="Left" Margin="10,457,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <RichTextBox Name="CalendarRichTextBox" HorizontalAlignment="Left" Height="128" Margin="10,324,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Label Content="The permissions below are shorthand, see link for more details.&#xD;&#xA;Create Items, Create Subfolders, Delete All Items, Delete Owned Items, Edit All Items,&#xD;&#xA;Edit Owned Items, Folder Contact, Folder Owner, Folder Visible, Read Items" HorizontalAlignment="Left" Margin="10,86,0,0" VerticalAlignment="Top" Height="57" Width="473"/>
@@ -132,12 +132,12 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Click Pick OneDrive to select the OneDrive to be shared.  This may take longer than usual as&#xD;&#xA;it must pull ALL users, not just active ones.  The Share OneDrive will then activate and&#xD;&#xA;allow you to select the user to grant access to the chosen OneDrive folder." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="60"/>
-                    <Button Name="OneDriveGoButton" Content="Share OneDrive" HorizontalAlignment="Left" Margin="10,397,0,-10" VerticalAlignment="Top" Width="473" Height="52" IsEnabled="False"/>
-                    <RichTextBox Name="OneDriveRichTextBox" HorizontalAlignment="Left" Height="208" Margin="10,189,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Button Name="OneDriveGoButton" Content="Share OneDrive" HorizontalAlignment="Left" Margin="10,455,0,0" VerticalAlignment="Top" Width="473" Height="52" IsEnabled="False"/>
+                    <RichTextBox Name="OneDriveRichTextBox" HorizontalAlignment="Left" Height="208" Margin="10,242,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="OneDriveReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <TextBox Name="OneDriveUserTextbox" HorizontalAlignment="Left" Height="23" Margin="258,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
+                    <TextBox Name="OneDriveUserTextbox" HorizontalAlignment="Left" Height="23" Margin="258,147,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" IsReadOnly="True" Background="#FFC8C8C8"/>
                     <Button Name="OneDriveButton" Content="Pick OneDrive" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="243" Height="54"/>
                 </Grid>
             </TabItem>
@@ -153,45 +153,46 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <TextBox Name="CreatePasswordTextbox" HorizontalAlignment="Left" Height="23" Margin="10,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="4"/>
                     <Label Content="Password" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="67"/>
                     <ComboBox Name="DomainCombobox" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="168" TabIndex="3"/>
-                    <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,304,0,0" VerticalAlignment="Top" Width="91"/>
-                    <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,335,0,0" VerticalAlignment="Top" Width="168" TabIndex="5"/>
+                    <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,368,0,0" VerticalAlignment="Top" Width="91"/>
+                    <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,394,0,0" VerticalAlignment="Top" Width="168" TabIndex="6"/>
                     <Label Content="City" HorizontalAlignment="Left" Margin="343,41,0,0" VerticalAlignment="Top" Width="57"/>
                     <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="7"/>
                     <Label Content="State" HorizontalAlignment="Left" Margin="343,100,0,0" VerticalAlignment="Top" Width="57"/>
                     <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
-                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,218,0,0" VerticalAlignment="Top" Width="107"/>
-                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,249,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
+                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,273,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,304,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="11"/>
                     <Label Content="--Once you have filled in&#xA;the required details, click &#xA;Create User.&#xA;&#xD;&#xA;--The button will&#xA;activate when the left is&#xD;&#xA;filled in, the right is not&#xD;&#xA;required for all tenants.&#xD;&#xA;&#xD;&#xA;--You will be prompted to &#xD;&#xA;connect to Exchange&#xD;&#xA;Online, then for Licenses&#xD;&#xA;and Groups to add." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,41,0,0" Height="230" Width="155"/>
-                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="10,382,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="20,440,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,336,0,0" VerticalAlignment="Top" Width="300" Height="41" IsEnabled="False" TabIndex="11"/>
+                    <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="183,394,0,0" VerticalAlignment="Top" Width="300" Height="41" IsEnabled="False" TabIndex="11"/>
                     <Label Content="Country" HorizontalAlignment="Left" Margin="343,159,0,0" VerticalAlignment="Top"/>
                     <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="9"/>
                     <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="26"/>
-                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,362,0,0" VerticalAlignment="Top" TabIndex="6"/>
+                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,306,0,0" VerticalAlignment="Top" TabIndex="5"/>
                     <Slider Name="CreatePasswordLengthSlider" HorizontalAlignment="Left" Margin="183,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="126" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
                     <TextBox Name="CreatePasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="314,304,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=CreatePasswordLengthSlider, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="24" IsReadOnly="True"/>
                     <Button Name="CreateRandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="155" Height="24"/>
-                    <Label Content="CustomAttribute2" HorizontalAlignment="Left" Margin="343,277,0,0" VerticalAlignment="Top" Width="107"/>
-                    <TextBox Name="CustomAttribute2Textbox" HorizontalAlignment="Left" Height="23" Margin="343,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
+                    <Label Content="CustomAttribute2" HorizontalAlignment="Left" Margin="343,332,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute2Textbox" HorizontalAlignment="Left" Height="23" Margin="343,363,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="12"/>
+                    <Label Content="Phone Number" HorizontalAlignment="Left" Margin="343,214,0,0" VerticalAlignment="Top"/>
+                    <TextBox Name="PhoneTextbox" HorizontalAlignment="Left" Height="23" Margin="343,245,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
                 </Grid>
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="176*"/>
-                        <ColumnDefinition Width="317*"/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Label Content="Please Select Options Below for User Termination and press Terminate User.  You will&#xD;&#xA;be prompted to select a user and who to share to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="43" Grid.ColumnSpan="2"/>
-                    <GroupBox Header="Share OneDrive?" HorizontalAlignment="Left" Height="92" Margin="67,113,0,0" VerticalAlignment="Top" Width="240" Grid.Column="1">
+                    <Label Content="Please Select Options Below for User Termination and press Terminate User.  You will&#xD;&#xA;be prompted to select a user and who to share to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Width="473" Height="43"/>
+                    <GroupBox Header="Share OneDrive?" HorizontalAlignment="Left" Height="92" Margin="243,113,0,0" VerticalAlignment="Top" Width="240">
                         <StackPanel HorizontalAlignment="Left" Height="74" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="281">
                             <RadioButton Name="OneDriveNoRadioButton" Content="No" TabIndex="3"/>
                             <RadioButton Name="OneDriveSameRadioButton" Content="To Same User As Shared Mailbox" IsChecked="True" TabIndex="4"/>
                             <RadioButton Name="OneDriveDifferentRadioButton" Content="To Different User As Shared Mailbox" TabIndex="5"/>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Standard Options" HorizontalAlignment="Left" Height="92" Margin="10,113,0,0" VerticalAlignment="Top" Width="228" Grid.ColumnSpan="2">
+                    <GroupBox Header="Standard Options" HorizontalAlignment="Left" Height="92" Margin="10,113,0,0" VerticalAlignment="Top" Width="228">
                         <StackPanel HorizontalAlignment="Left" Height="74" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="208">
                             <CheckBox Name="ConvertCheckbox" Content="Convert to Shared Mailbox?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="0"/>
                             <CheckBox Name="RemoveLicensesCheckbox" Content="Remove All Licenses?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="1"/>
@@ -199,11 +200,11 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                             <CheckBox Name="ResetMFACheckbox" Content="Reset MFA?" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="-1.855,-1.274" IsChecked="True" TabIndex="2"/>
                         </StackPanel>
                     </GroupBox>
-                    <Button Name="RemoveGoButton" Content="Terminate User" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="473" Height="52" Grid.ColumnSpan="2"/>
-                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="182" Margin="10,210,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2">
+                    <Button Name="RemoveGoButton" Content="Terminate User" HorizontalAlignment="Left" Margin="10,455,0,0" VerticalAlignment="Top" Width="473" Height="52"/>
+                    <RichTextBox Name="RemoveRichTextBox" HorizontalAlignment="Left" Height="240" Margin="10,210,0,0" VerticalAlignment="Top" Width="473" IsReadOnly="True" Background="#FF646464" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
-                    <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50" Grid.ColumnSpan="2"/>
+                    <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -1133,6 +1134,9 @@ $CreateGoButton.Add_Click({
             }
             if([string]::IsNullOrWhiteSpace($countryTextbox.Text) -eq $false){
                 Set-AzureADUser -ObjectID $UPN -Country $countryTextbox.Text
+            }
+            if([string]::IsNullOrWhiteSpace($PhoneTextbox.Text) -eq $false){
+                Set-AzureADUser -ObjectID $UPN -Country $PhoneTextbox.Text
             }
             if([string]::IsNullOrWhiteSpace($CustomAttribute1Textbox.Text) -eq $false){
                 MailboxExistCheck($UPN)
