@@ -1132,7 +1132,7 @@ $CreateGoButton.Add_Click({
                 Set-AzureADUser -ObjectID $UPN -State $stateTextbox.Text
             }
             if([string]::IsNullOrWhiteSpace($countryTextbox.Text) -eq $false){
-                Set-AzureADUser -ObjectID $UPN -State $countryTextbox.Text
+                Set-AzureADUser -ObjectID $UPN -Country $countryTextbox.Text
             }
             if([string]::IsNullOrWhiteSpace($CustomAttribute1Textbox.Text) -eq $false){
                 MailboxExistCheck($UPN)
