@@ -1131,11 +1131,11 @@ $CreateGoButton.Add_Click({
             if([string]::IsNullOrwhiteSpace($cityTextbox.Text) -eq $false){
                 Set-AzureADUser -ObjectId $UPN -City $cityTextbox.Text
             }
-            if([string]::IsNullOrWhiteSpace($ZipTextbox.Text) -eq $false){
-                Set-AzureADUser -ObjectID $UPN -State $ZipTextbox.Text
-            }
             if([string]::IsNullOrWhiteSpace($stateTextbox.Text) -eq $false){
                 Set-AzureADUser -ObjectID $UPN -State $stateTextbox.Text
+            }
+            if([string]::IsNullOrWhiteSpace($ZipTextbox.Text) -eq $false){
+                Set-AzureADUser -ObjectID $UPN -PostalCode $ZipTextbox.Text
             }
             if([string]::IsNullOrWhiteSpace($countryTextbox.Text) -eq $false){
                 Set-AzureADUser -ObjectID $UPN -Country $countryTextbox.Text
