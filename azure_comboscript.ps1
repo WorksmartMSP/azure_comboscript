@@ -150,35 +150,37 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Label Content="Username" HorizontalAlignment="Left" Margin="10,128,0,0" VerticalAlignment="Top" Width="67"/>
                     <TextBox Name="UsernameTextbox" HorizontalAlignment="Left" Height="23" Margin="10,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="2"/>
                     <Label Content="@" HorizontalAlignment="Left" Margin="10,187,0,0" VerticalAlignment="Top" Width="67"/>
-                    <TextBox Name="CreatePasswordTextbox" HorizontalAlignment="Left" Height="23" Margin="10,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="4"/>
-                    <Label Content="Password" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="67"/>
+                    <TextBox Name="CreatePasswordTextbox" HorizontalAlignment="Left" Height="23" Margin="10,335,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="168" TabIndex="5"/>
+                    <Label Content="Password" HorizontalAlignment="Left" Margin="10,304,0,0" VerticalAlignment="Top" Width="67"/>
                     <ComboBox Name="DomainCombobox" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="168" TabIndex="3"/>
-                    <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,332,0,0" VerticalAlignment="Top" Width="91"/>
-                    <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,364,0,0" VerticalAlignment="Top" Width="168" TabIndex="7"/>
-                    <Label Content="City" HorizontalAlignment="Left" Margin="343,41,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="343,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
-                    <Label Content="State" HorizontalAlignment="Left" Margin="343,100,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,131,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="9"/>
-                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="183,332,0,0" VerticalAlignment="Top" Width="107"/>
-                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="183,363,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="13"/>
-                    <Label Content="--Once you have filled in&#xA;the required details, click &#xA;Create User.&#xA;&#xD;&#xA;--The button will&#xA;activate when the left is&#xD;&#xA;filled in, the right is not&#xD;&#xA;required for all tenants.&#xD;&#xA;&#xD;&#xA;--You will be prompted to &#xD;&#xA;connect to Exchange&#xD;&#xA;Online, then for Licenses&#xD;&#xA;and Groups to add." HorizontalAlignment="Left" VerticalAlignment="Top" Margin="183,41,0,0" Height="230" Width="155"/>
+                    <Label Content="Usage Location" HorizontalAlignment="Left" Margin="10,247,0,0" VerticalAlignment="Top" Width="91"/>
+                    <ComboBox Name="UsageLocationCombobox" HorizontalAlignment="Left" Margin="10,279,0,0" VerticalAlignment="Top" Width="168" TabIndex="4"/>
+                    <Label Content="State" HorizontalAlignment="Left" Margin="343,128,0,0" VerticalAlignment="Top" Width="56"/>
+                    <TextBox Name="StateTextbox" HorizontalAlignment="Left" Height="23" Margin="343,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="9"/>
+                    <Label Content="CustomAttribute1" HorizontalAlignment="Left" Margin="343,0,0,0" VerticalAlignment="Center" Width="107"/>
+                    <TextBox Name="CustomAttribute1Textbox" HorizontalAlignment="Left" Height="23" Margin="343,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="13"/>
                     <RichTextBox Name="CreateRichTextBox" HorizontalAlignment="Left" Height="67" Margin="20,440,0,0" VerticalAlignment="Top" Width="473" Background="#FF646464" Foreground="Cyan" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="CreateGoButton" Content="Create User" HorizontalAlignment="Left" Margin="20,394,0,0" VerticalAlignment="Top" Width="463" Height="41" IsEnabled="False" TabIndex="15"/>
-                    <Label Content="Country" HorizontalAlignment="Left" Margin="343,222,0,0" VerticalAlignment="Top"/>
-                    <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="11"/>
+                    <Label Content="Country" HorizontalAlignment="Left" Margin="343,187,0,0" VerticalAlignment="Top"/>
+                    <TextBox Name="CountryTextbox" HorizontalAlignment="Left" Height="23" Margin="343,217,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="11"/>
                     <Button Name="CreateReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="183,10,0,0" VerticalAlignment="Top" Width="300" Height="26"/>
-                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="10,306,0,0" VerticalAlignment="Top" TabIndex="6"/>
-                    <Slider Name="CreatePasswordLengthSlider" HorizontalAlignment="Left" Margin="183,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="126" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
-                    <TextBox Name="CreatePasswordLengthTextBox" HorizontalAlignment="Left" Height="23" Margin="314,304,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=CreatePasswordLengthSlider, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="24" IsReadOnly="True"/>
-                    <Button Name="CreateRandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="183,277,0,0" VerticalAlignment="Top" Width="155" Height="24" TabIndex="5"/>
-                    <Label Content="CustomAttribute2" HorizontalAlignment="Left" Margin="343,332,0,0" VerticalAlignment="Top" Width="107"/>
-                    <TextBox Name="CustomAttribute2Textbox" HorizontalAlignment="Left" Height="23" Margin="343,363,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="14"/>
-                    <Label Content="Phone Number" HorizontalAlignment="Left" Margin="343,277,0,0" VerticalAlignment="Top"/>
-                    <TextBox Name="PhoneTextbox" HorizontalAlignment="Left" Height="23" Margin="343,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="12"/>
-                    <Label Content="Zip Code" HorizontalAlignment="Left" Margin="343,159,0,0" VerticalAlignment="Top" Width="57"/>
-                    <TextBox Name="ZipTextbox" HorizontalAlignment="Left" Height="23" Margin="343,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
+                    <CheckBox Name="CreateResetPasswordCheckbox" Content="Reset Password on Login?" HorizontalAlignment="Left" Margin="16,363,0,0" VerticalAlignment="Top" TabIndex="6"/>
+                    <Slider Name="CreatePasswordLengthSlider" HorizontalAlignment="Center" Margin="0,363,0,0" VerticalAlignment="Top" RenderTransformOrigin="-19.075,-4.255" Width="126" Maximum="20" Minimum="12" IsSnapToTickEnabled="True" TickPlacement="BottomRight" Foreground="Cyan"/>
+                    <TextBox Name="CreatePasswordLengthTextBox" HorizontalAlignment="Left" Height="21" Margin="313,363,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=CreatePasswordLengthSlider, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="23" IsReadOnly="True"/>
+                    <Button Name="CreateRandomPasswordButton" Content="Generate Random Password" HorizontalAlignment="Left" Margin="184,335,0,0" VerticalAlignment="Top" Width="154" Height="24"/>
+                    <Label Content="CustomAttribute2" HorizontalAlignment="Left" Margin="343,304,0,0" VerticalAlignment="Top" Width="107"/>
+                    <TextBox Name="CustomAttribute2Textbox" HorizontalAlignment="Left" Height="23" Margin="343,335,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="14"/>
+                    <Label Content="Phone Number" HorizontalAlignment="Left" Margin="189,0,0,0" VerticalAlignment="Center"/>
+                    <TextBox Name="PhoneTextbox" HorizontalAlignment="Left" Height="23" Margin="189,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="12"/>
+                    <Label Content="Zip Code" HorizontalAlignment="Left" Margin="183,187,0,0" VerticalAlignment="Top" Width="57"/>
+                    <TextBox Name="ZipTextbox" HorizontalAlignment="Left" Height="23" Margin="189,217,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="10"/>
+                    <Label Content="City" HorizontalAlignment="Left" Margin="183,128,0,0" VerticalAlignment="Top" Width="58"/>
+                    <TextBox Name="CityTextbox" HorizontalAlignment="Left" Height="23" Margin="189,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TabIndex="8"/>
+                    <Label Content="Street Address" HorizontalAlignment="Left" Margin="187,69,0,0" VerticalAlignment="Top" Width="93"/>
+                    <TextBox Name="AddressTextbox" HorizontalAlignment="Left" Height="23" Margin="189,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="294" TabIndex="7"/>
+                    <Label Content="Create User Button Activates Once Left Side Is Filled In" HorizontalAlignment="Left" Margin="184,36,0,0" VerticalAlignment="Top" Width="299"/>
                 </Grid>
             </TabItem>
             <TabItem Name="TerminateTab" Header="Terminate User">
@@ -1128,6 +1130,9 @@ $CreateGoButton.Add_Click({
                 $Licenses.AddLicenses = $AssignedLicense
                 Set-AzureADUserLicense -ObjectID $UPN -AssignedLicenses $Licenses
             }
+            if([string]::IsNullOrwhiteSpace($AddressTextbox.Text) -eq $false){
+                Set-AzureADUser -ObjectId $UPN -StreetAddress $AddressTextbox.Text
+            }            
             if([string]::IsNullOrwhiteSpace($cityTextbox.Text) -eq $false){
                 Set-AzureADUser -ObjectId $UPN -City $cityTextbox.Text
             }
@@ -1184,6 +1189,8 @@ $CreateGoButton.Add_Click({
             $CustomAttribute1Textbox.Text = ""
             $cityTextbox.Text = ""
             $stateTextbox.Text = ""
+            $zipTextbox.Text = ""
+            $AddressTextbox.Text = ""
             $countryTextBox.Text = ""
             $firstnameTextbox.Text = ""
             $lastnameTextbox.Text = ""
