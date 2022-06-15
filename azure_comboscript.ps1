@@ -57,24 +57,28 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Button Name="MailboxReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <Label Content="Pick a Mailbox to apply permissions to." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="28" Width="473"/>
+                    <Label Content="Pick a Mailbox to access." HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" Height="28" Width="473"/>
                     <Button Name="MailboxGoButton" Content="Set Mailbox Permissions For User(s)" HorizontalAlignment="Left" Margin="10,457,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
-                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Left" Height="163" Margin="10,289,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
+                    <RichTextBox Name="MailboxRichTextBox" HorizontalAlignment="Center" Height="112" Margin="0,340,0,0" VerticalAlignment="Top" Width="473" Foreground="Cyan" Background="#FF646464" IsReadOnly="True" HorizontalScrollBarVisibility="Auto">
                         <FlowDocument/>
                     </RichTextBox>
                     <Button Name="MailboxButton" Content="Pick Mailbox" HorizontalAlignment="Left" Margin="10,98,0,0" VerticalAlignment="Top" Width="231" Height="50"/>
                     <TextBox Name="MailboxTextBox" HorizontalAlignment="Left" Height="23" Margin="246,114,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="237" Background="#FFC8C8C8" IsReadOnly="True"/>
-                    <Label Content="Checked permissions will be set, unchecked permissions will be removed.  Output will&#xD;&#xA;always show updated, as it overwrites without error." HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Width="473"/>
-                    <CheckBox Name="FullAccessCheckbox" Content="Full Access" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    <CheckBox Name="SendAsCheckbox" Content="Send As" HorizontalAlignment="Left" Margin="164,200,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    <CheckBox Name="SendOnBehalfCheckbox" Content="Send On Behalf" HorizontalAlignment="Left" Margin="298,200,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.811,0.444" IsChecked="True"/>
-                    <GroupBox Header="AutoMap (Full Access Only)" HorizontalAlignment="Left" Height="64" Margin="10,220,0,0" VerticalAlignment="Top" Width="252">
+                    <Label Content="Checked permissions will be set, unchecked permissions will be removed.  Output will&#xD;&#xA;always show updated, as it overwrites without error." HorizontalAlignment="Center" Margin="0,205,0,0" VerticalAlignment="Top" Width="473"/>
+                    <CheckBox Name="FullAccessCheckbox" Content="Full Access" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="True"/>
+                    <CheckBox Name="SendAsCheckbox" Content="Send As" HorizontalAlignment="Left" Margin="164,0,0,0" VerticalAlignment="Center" IsChecked="True"/>
+                    <CheckBox Name="SendOnBehalfCheckbox" Content="Send On Behalf" HorizontalAlignment="Left" Margin="298,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.811,0.444" IsChecked="True"/>
+                    <GroupBox Header="AutoMap (Full Access Only)" HorizontalAlignment="Left" Height="64" Margin="10,271,0,0" VerticalAlignment="Top" Width="252">
                         <Grid HorizontalAlignment="Left" Height="44" Margin="10,10,-2,-13" VerticalAlignment="Top" Width="232">
                             <RadioButton Name="AutoMapYesRadioButton" Content="Yes" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
                             <RadioButton Name="AutoMapNoRadioButton" Content="No" HorizontalAlignment="Left" Margin="61,10,0,0" VerticalAlignment="Top"/>
                             <CheckBox Name="ForceRemapCheckbox" Content="Force Remap?" HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top"/>
                         </Grid>
                     </GroupBox>
+                    <Button Name="ConvertToSharedButton" Content="Convert To Shared Mailbox" HorizontalAlignment="Left" Margin="10,155,0,0" VerticalAlignment="Top" Width="231" Height="25" IsEnabled="False"/>
+                    <Button Name="ConvertToUserButton" Content="Convert To User Mailbox" HorizontalAlignment="Left" Margin="252,155,0,0" VerticalAlignment="Top" Width="231" Height="25" IsEnabled="False"/>
+                    <Button Name="ConvertToEquipmentButton" Content="Convert To Equipment Mailbox" HorizontalAlignment="Left" Margin="10,180,0,0" VerticalAlignment="Top" Width="231" Height="25" IsEnabled="False"/>
+                    <Button Name="ConvertToRoomButton" Content="Convert To Room Mailbox" HorizontalAlignment="Left" Margin="252,180,0,0" VerticalAlignment="Top" Width="231" Height="25" IsEnabled="False"/>
                 </Grid>
             </TabItem>
             <TabItem Name="GroupTab" Header="Groups">
@@ -518,8 +522,88 @@ $MailboxButton.Add_Click({
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
     }
-    $TempMailbox = Get-Mailbox -ResultSize Unlimited | Select-Object Displayname,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select a Mailbox" -OutputMode Single
+    $TempMailbox = Get-Mailbox -ResultSize Unlimited | Select-Object Displayname,UserPrincipalName,RecipientTypeDetails | Sort-Object Displayname | Out-GridView -Title "Select a Mailbox" -OutputMode Single
     $MailboxTextbox.Text = $TempMailbox.UserPrincipalName
+    if($TempMailbox.RecipientTypeDetails -match 'EquipmentMailbox'){
+        $ConvertToEquipmentButton.IsEnabled = $false
+        $ConvertToRoomButton.IsEnabled = $true
+        $ConvertToSharedButton.IsEnabled = $true
+        $ConvertToUserButton.IsEnabled = $true
+    }
+    elseif($TempMailbox.RecipientTypeDetails -match 'RoomMailbox'){
+        $ConvertToEquipmentButton.IsEnabled = $true
+        $ConvertToRoomButton.IsEnabled = $false
+        $ConvertToSharedButton.IsEnabled = $true
+        $ConvertToUserButton.IsEnabled = $true
+    }
+    elseif($TempMailbox.RecipientTypeDetails -match 'SharedMailbox'){        
+        $ConvertToEquipmentButton.IsEnabled = $true
+        $ConvertToRoomButton.IsEnabled = $true
+        $ConvertToSharedButton.IsEnabled = $false
+        $ConvertToUserButton.IsEnabled = $true
+    }
+    elseif($TempMailbox.RecipientTypeDetails -match 'UserMailbox'){
+        $ConvertToEquipmentButton.IsEnabled = $true
+        $ConvertToRoomButton.IsEnabled = $true
+        $ConvertToSharedButton.IsEnabled = $true
+        $ConvertToUserButton.IsEnabled = $false
+    }
+})
+
+$ConvertToEquipmentButton.Add_Click({
+    Try{
+        Set-Mailbox -Identity $MailboxTextbox.Text -Type Equipment -ErrorAction SilentlyContinue
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) has been converted to an Equipment Mailbox`r" 
+        $ConvertToEquipmentButton.IsEnabled = $false
+        $ConvertToRoomButton.IsEnabled = $true
+        $ConvertToSharedButton.IsEnabled = $true
+        $ConvertToUserButton.IsEnabled = $true
+    }
+    Catch{
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) conversion has failed, please verify manually`r" -Color "Red"
+    }
+})
+
+$ConvertToRoomButton.Add_Click({
+    Try{
+        Set-Mailbox -Identity $MailboxTextbox.Text -Type Room -ErrorAction SilentlyContinue
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) has been converted to a Room Mailbox`r" 
+        $ConvertToEquipmentButton.IsEnabled = $true
+        $ConvertToRoomButton.IsEnabled = $false
+        $ConvertToSharedButton.IsEnabled = $true
+        $ConvertToUserButton.IsEnabled = $true
+    }
+    Catch{
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) conversion has failed, please verify manually`r" -Color "Red"
+    }
+})
+
+$ConvertToSharedButton.Add_Click({
+    Try{
+        Set-Mailbox -Identity $MailboxTextbox.Text -Type Shared -ErrorAction SilentlyContinue
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) has been converted to a Shared Mailbox`r" 
+        $ConvertToEquipmentButton.IsEnabled = $true
+        $ConvertToRoomButton.IsEnabled = $true
+        $ConvertToSharedButton.IsEnabled = $false
+        $ConvertToUserButton.IsEnabled = $true
+    }
+    Catch{
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) conversion has failed, please verify manually`r" -Color "Red"
+    }
+})
+
+$ConvertToUserButton.Add_Click({
+    Try{
+        Set-Mailbox -Identity $MailboxTextbox.Text -Type Regular
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) has been converted to a User Mailbox`r"
+        $ConvertToEquipmentButton.IsEnabled = $true
+        $ConvertToRoomButton.IsEnabled = $true
+        $ConvertToSharedButton.IsEnabled = $true
+        $ConvertToUserButton.IsEnabled = $false
+    }
+    Catch{
+        Write-RichtextBox -TextBox $MailboxRichTextBox -Text "$($MailboxTextbox.Text) conversion has failed, please verify manually`r" -Color "Red"
+    }
 })
 
 $MailboxGoButton.Add_Click({
@@ -774,7 +858,12 @@ $CalendarUserButton.Add_Click({
     }
 
     $TempCalendarUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Select-Object DisplayName,UserprincipalName | Sort-Object DisplayName | Out-GridView -Title "Select User" -OutputMode Single
-    $CalendarUserTextBox.Text = $TempCalendarUser.UserPrincipalName
+    if((Get-Mailbox -Identity $TempCalendarUser.UserPrincipalName | Select-Object RecipientTypeDetails) -match 'SharedMailbox'){
+        Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Cannot add Calendar permissions to a Shared Mailbox, please convert to User Mailbox and try again`r" -Color "Red"
+    }
+    else{
+        $CalendarUserTextBox.Text = $TempCalendarUser.UserPrincipalName
+    }
 })
 
 $CalendarButton.Add_Click({
@@ -1321,7 +1410,7 @@ $RemoveGoButton.Add_Click({
                 Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r"
             }
             Catch{
-                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually (OneDrive Tab once confirmed)" -Color "Red"
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually (OneDrive Tab once confirmed)`r" -Color "Red"
             }
         }
         #Share OneDrive With Different User(s) than Shared Mailbox
@@ -1338,10 +1427,10 @@ $RemoveGoButton.Add_Click({
                     Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
                 }
                 Catch{
-                    Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually (OneDrive Tab once confirmed)" -Color "Red"
+                    Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually (OneDrive Tab once confirmed)`r" -Color "Red"
                 }
             }else{
-                Write-RichtextBox -TextBox $RemoveRichTextBox -Text  "OneDrive Share Cancelled" -Color "Red"
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text  "OneDrive Share Cancelled`r" -Color "Red"
             }
         }
 
