@@ -782,7 +782,7 @@ $CalendarButton.Add_Click({
         Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
-    }
+    }    
     $TempCalendarUser = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select Calendar" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
     $TempCalendar = Get-MailboxFolderStatistics $TempCalendarUser | Where-Object {($_.folderpath -match 'Calendar') -and ($_.folderpath -notmatch 'Logging')}| Select-Object Name,Identity,folderpath,foldertype | Out-GridView -Title "Please select a Calendar" -OutputMode Single | Select-Object -ExpandProperty Identity
     $CalendarTextBox.Text = $TempCalendar -replace '^(.*?)\\(.*)','$1:\$2'
@@ -1314,10 +1314,15 @@ $RemoveGoButton.Add_Click({
         if ($OneDriveSameRadioButton.IsChecked) {
             Clear-Variable OneDriveSiteURL -ErrorAction SilentlyContinue
             #Pull OneDriveSiteURL Dynamically And Grant Access
-            $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
-            #Add User Receiving Access To Terminated User's OneDrive
-            Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
-            Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r"
+            Try{
+                $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url -ErrorAction SilentlyContinue
+                #Add User Receiving Access To Terminated User's OneDrive
+                Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedMailboxUser -IsSiteCollectionAdmin $True
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedMailboxUser successfully, link to copy and give to Manager is $OneDriveSiteURL`r"
+            }
+            Catch{
+                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually (OneDrive Tab once confirmed)" -Color "Red"
+            }
         }
         #Share OneDrive With Different User(s) than Shared Mailbox
         elseif ($OneDriveDifferentRadioButton.IsChecked) {
@@ -1326,10 +1331,15 @@ $RemoveGoButton.Add_Click({
             #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
             if($SharedOneDriveUser){
                 Clear-Variable SharedOneDriveUser -Erroraction SilentlyContinue
-                $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
-                #Add User Receiving Access To Terminated User's OneDrive
-                Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
-                Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
+                Try{
+                    $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($UserInfo.UserPrincipalName)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url -ErrorAction SilentlyContinue
+                    #Add User Receiving Access To Terminated User's OneDrive
+                    Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
+                    Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
+                }
+                Catch{
+                    Write-RichtextBox -TextBox $RemoveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually (OneDrive Tab once confirmed)" -Color "Red"
+                }
             }else{
                 Write-RichtextBox -TextBox $RemoveRichTextBox -Text  "OneDrive Share Cancelled" -Color "Red"
             }
