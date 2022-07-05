@@ -871,7 +871,12 @@ $CalendarButton.Add_Click({
         Get-AcceptedDomain -ErrorAction Stop | Out-Null
     }Catch{
         Connect-ExchangeOnline -ShowBanner:$false
-    }    
+    }
+    Try{
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
     $TempCalendarUser = Get-Mailbox -Filter {(RecipientTypeDetails -eq "SharedMailbox") -or (RecipientTypeDetails -eq "UserMailbox") -or (RecipientTypeDetails -eq "RoomMailbox")} | Select-Object DisplayName,UserPrincipalName | Sort-Object Displayname | Out-GridView -Title "Select Calendar" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
     $TempCalendar = Get-MailboxFolderStatistics $TempCalendarUser | Where-Object {($_.folderpath -match 'Calendar') -and ($_.folderpath -notmatch 'Logging')}| Select-Object Name,Identity,folderpath,foldertype | Out-GridView -Title "Please select a Calendar" -OutputMode Single | Select-Object -ExpandProperty Identity
     $CalendarTextBox.Text = $TempCalendar -replace '^(.*?)\\(.*)','$1:\$2'
