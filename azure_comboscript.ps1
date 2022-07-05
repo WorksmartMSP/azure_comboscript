@@ -911,7 +911,6 @@ $CalendarGoButton.Add_Click({
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Contributor -Confirm:$false -ErrorAction Stop
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Contributor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Contributor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -924,8 +923,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Editor -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Editor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Editor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -938,8 +936,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights None -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added None permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "None Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -980,8 +977,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights Owner -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added Owner permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Owner Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -994,8 +990,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingAuthor -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added PublishingAuthor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "PublishingAuthor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -1008,8 +1003,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights PublishingEditor -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added PublishingEditor permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "PublishingEditor Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -1022,8 +1016,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights AvailabilityOnly -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added AvailabilityOnly permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "AvailabilityOnly Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
@@ -1036,8 +1029,7 @@ $CalendarGoButton.Add_Click({
         }Catch{
             Try{
                 Add-MailboxFolderPermission -Identity $CalendarTextBox.Text -User $CalendarUserTextBox.Text -AccessRights LimitedDetails -Confirm:$false -ErrorAction Stop
-                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"
-    
+                Write-RichtextBox -TextBox $CalendarRichTextBox -Text "Successfully added LimitedDetails permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text)`r"    
             }Catch{
                 Write-RichtextBox -TextBox $CalendarRichTextBox -Text "LimitedDetails Permissions for $($CalendarUserTextbox.Text) on $($CalendarTextBox.Text) Not Set`r" -Color "Red"
             }
