@@ -856,6 +856,11 @@ $CalendarUserButton.Add_Click({
         Connect-AzureAD
         Set-Comboboxes
     }
+    Try{
+        Get-AcceptedDomain -ErrorAction Stop | Out-Null
+    }Catch{
+        Connect-ExchangeOnline -ShowBanner:$false
+    }
 
     $TempCalendarUser = Get-AzureADUser -All $true | Where-Object {$_.AccountEnabled } | Select-Object DisplayName,UserprincipalName | Sort-Object DisplayName | Out-GridView -Title "Select User" -OutputMode Single
     if((Get-Mailbox -Identity $TempCalendarUser.UserPrincipalName | Select-Object RecipientTypeDetails) -match 'SharedMailbox'){
