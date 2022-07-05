@@ -215,6 +215,23 @@ if(-not(Get-Module Microsoft.Online.SharePoint.PowerShell -ListAvailable)){
                     <Button Name="TerminateReconnectButton" Content="Reconnect/ChangeTenants" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
                 </Grid>
             </TabItem>
+            <TabItem Name="SpamFilterTab" Header="Spam Filter">
+                <Grid Background="#FFE5E5E5">
+                    <Label Content="If adding to the Spam Filter, enter a user/domain, and it will add to the correct blacklist.&#xD;&#xA;&#xD;&#xA;If removing, you will need to select the appropriate button, and you will receive a&#xD;&#xA;dialogue box to select and remove." HorizontalAlignment="Center" Margin="0,65,0,0" VerticalAlignment="Top" Height="76" Width="473"/>
+                    <Button Name="SpamFilterReconnectButton" Content="Reconnect/Change Tenants" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="473" Height="50"/>
+                    <RichTextBox Name="SpamFilterRichTextBox" HorizontalAlignment="Center" Height="166" VerticalAlignment="Top" Width="473" Background="#FF646464" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,231,0,0">
+                        <FlowDocument/>
+                    </RichTextBox>
+                    <Button Name="SpamFilterRemoveDomainBlacklistButton" Content="Remove Domain(s) from Blacklist" HorizontalAlignment="Left" Margin="253,457,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="SpamFilterRemoveUserBlacklistButton" Content="Remove User(s) from Blacklist" HorizontalAlignment="Left" Margin="253,402,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="SpamFilterAddWhitelistButton" Content="Add to Whitelist" HorizontalAlignment="Left" Margin="10,176,0,0" VerticalAlignment="Top" Width="230" Height="50" IsEnabled="False"/>
+                    <TextBox Name="SpamFilterTextBox" HorizontalAlignment="Center" Height="25" Margin="0,146,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="473" TabIndex="1"/>
+                    <Button Name="SpamFilterAddBlacklistButton" Content="Add to Blacklist" HorizontalAlignment="Left" Margin="253,176,0,0" VerticalAlignment="Top" Width="230" Height="50" IsEnabled="False"/>
+                    <Button Name="SpamFilterRemoveDomainWhitelistButton" Content="Remove Domain(s) from Whitelist" HorizontalAlignment="Left" Margin="10,457,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+                    <Button Name="SpamFilterRemoveUserWhitelistButton" Content="Remove User(s) from Whitelist" HorizontalAlignment="Left" Margin="10,402,0,0" VerticalAlignment="Top" Width="230" Height="50"/>
+
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 
@@ -1093,11 +1110,15 @@ $OneDriveGoButton.Add_Click({
     $SharedOneDriveUser = Get-AzureADUser -All $true | Sort-Object Displayname | Select-Object -Property DisplayName,UserPrincipalName | Out-GridView -Title "Please select the user to share the OneDrive with" -OutputMode Single | Select-Object -ExpandProperty UserPrincipalName
     #Pull Object ID Needed For User Receiving Access To OneDrive And OneDriveSiteURL Dynamically
     if($SharedOneDriveUser){
-        $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($OneDriveUserTextbox.Text)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url            
-        #Add User Receiving Access To Terminated User's OneDrive
-        Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
-        Write-RichtextBox -TextBox $OneDriveRichTextBox -Text "$($OneDriveUserTextBox.Text)'s OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
-        $OneDriveUserTextbox.Text = ""
+        Try{
+            $OneDriveSiteURL = Get-SPOSite -Filter "Owner -eq $($OneDriveUserTextbox.Text)" -IncludePersonalSite $true | Select-Object -ExpandProperty Url -ErrorAction Stop            
+            #Add User Receiving Access To Terminated User's OneDrive
+            Set-SPOUser -Site $OneDriveSiteUrl -LoginName $SharedOneDriveUser -IsSiteCollectionAdmin $True
+            Write-RichtextBox -TextBox $OneDriveRichTextBox -Text "$($OneDriveUserTextBox.Text)'s OneDrive Data Shared with $SharedOneDriveUser successfully, link to copy and provide to trustee is $OneDriveSiteURL`r"
+            $OneDriveUserTextbox.Text = ""
+        }Catch{
+            Write-RichtextBox -TextBox $OneDriveRichTextBox -Text "OneDrive URL does not exist, verify user in 365 manually`r" -Color "Red"
+        }
     }else{
         Write-RichtextBox -TextBox $OneDriveRichTextBox -Text  "OneDrive Share Cancelled" -Color "Red"
     }
@@ -1465,6 +1486,173 @@ $ShareMailboxCheckBox.Add_Unchecked({
     $OneDriveNoRadioButton.IsChecked = $true
 })
 ### End User Termination Tab Functionality
+
+### Start Spam Filter Tab Functionality
+$SpamFilterReconnectButton.Add_Click({
+
+})
+
+$SpamFilterTextBox.Add_TextChanged({
+    if($SpamFilterTextbox.Text.Length -ge 2){
+        $SpamFilterAddWhitelistButton.IsEnabled = $true
+        $SpamFilterAddBlacklistButton.IsEnabled = $true
+    }else{
+        $SpamFilterAddWhitelistButton.IsEnabled = $false
+        $SpamFilterAddBlacklistButton.IsEnabled = $false
+    }
+
+})
+
+$SpamFilterAddWhitelistButton.Add_Click({
+    Try {
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }
+    Catch {
+        Connect-ExchangeOnline
+    }
+    if([string]::IsNullOrwhiteSpace($SpamFilterTextBox.Text) -eq $false){
+        Try{
+            Set-HostedContentFilterPolicy Default -AllowedSenderDomains @{Add="$($SpamFilterTextbox.Text)"} -ErrorAction Stop
+            Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text  "Added $($SpamFilterTextbox.Text) to Domain Whitelist`r"
+            $SpamFilterTextBox.Text = ""
+        }
+        Catch{
+            Try{
+                Set-HostedContentFilterPolicy Default -AllowedSenders @{Add="$($SpamFilterTextbox.Text)"} -ErrorAction Stop
+                Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text  "Added $($SpamFilterTextbox.Text) to Sender Whitelist`r"
+                $SpamFilterTextBox.Text = ""
+            }
+            Catch{
+                Write-RichtextBox -TextBox $SpamFilterTextBox -Text  "$_.Message indicates $($SpamFilterTextbox.Text) is potentially invalid, please review entry and try again`r" -Color "Red"
+            }
+        }
+    }
+})
+
+$SpamFilterAddBlacklistButton.Add_Click({
+    Try {
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }
+    Catch {
+        Connect-ExchangeOnline
+    }
+    if([string]::IsNullOrwhiteSpace($SpamFilterTextBox.Text) -eq $false){
+        Try{
+            Set-HostedContentFilterPolicy Default -BlockedSenderDomains @{Add="$($SpamFilterTextbox.Text)"} -ErrorAction Stop
+            Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text  "Added $($SpamFilterTextbox.Text) to Domain Blacklist`r"
+            $SpamFilterTextBox.Text = ""
+        }
+        Catch{
+            Try{
+                Set-HostedContentFilterPolicy Default -BlockedSenders @{Add="$($SpamFilterTextbox.Text)"} -ErrorAction Stop
+                Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text  "Added $($SpamFilterTextbox.Text) to Sender Blacklist`r"
+                $SpamFilterTextBox.Text = ""
+            }
+            Catch{
+                Write-RichtextBox -TextBox $SpamFilterTextBox -Text  "$_.Message indicates $($SpamFilterTextbox.Text) is potentially invalid, please review entry and try again`r" -Color "Red"
+            }
+        }
+    }
+})
+
+$SpamFilterRemoveUserWhitelistButton.Add_Click({
+    Try {
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }
+    Catch {
+        Connect-ExchangeOnline
+    }
+    Clear-Variable rfwl -ErrorAction SilentlyContinue
+    Clear-Variable rfwls -ErrorAction SilentlyContinue
+    Try{
+        $rfwls = Get-HostedContentFilterPolicy Default
+        $rfwls = $rfwls.AllowedSenders | Select-Object -Property Sender | Out-GridView -Passthru -Title "Select Multiple Senders By Holding Ctrl"
+        foreach($rfwl in $rfwls){
+            Set-HostedContentFilterPolicy Default -AllowedSenders @{Remove="$($rfwl.sender)"}
+            Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text "Removed $($rfwl.Sender) from Sender Whitelist`r"
+        }
+    }
+    Catch{
+        Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text "$_.Message indicates an error has occurred.  Please review message and retry once resolved." -Color "Red"
+    }
+    Clear-Variable rfwl -ErrorAction SilentlyContinue
+    Clear-Variable rfwls -ErrorAction SilentlyContinue
+})
+
+$SpamFilterRemoveDomainWhitelistButton.Add_Click({
+    Try {
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }
+    Catch {
+        Connect-ExchangeOnline
+    }
+    Clear-Variable rdfwl -ErrorAction SilentlyContinue
+    Clear-Variable rdfwls -ErrorAction SilentlyContinue
+    Try{
+        $rdfwls = Get-HostedContentFilterPolicy Default
+        $rdfwls = $rdfwls.AllowedSenderDomains | Select-Object -Property Domain | Out-GridView -Passthru -Title "Select Multiple Senders By Holding Ctrl"
+        foreach($rdwfl in $rdfwls){
+            Set-HostedContentFilterPolicy Default -AllowedSenderDomains @{Remove="$($rdwfl.Domain)"}
+            Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text "Removed $($rdwfl.Domain) from Domain Whitelist`r"
+        }
+    }
+    Catch{
+        Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text "$_.Message indicates an error has occurred.  Please review message and retry once resolved."
+    }
+    Clear-Variable rdfwl -ErrorAction SilentlyContinue
+    Clear-Variable rdfwls -ErrorAction SilentlyContinue
+})
+
+
+$SpamFilterRemoveUserBlacklistButton.Add_Click({
+    Try {
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }
+    Catch {
+        Connect-ExchangeOnline
+    }
+    Clear-Variable rfbl -ErrorAction SilentlyContinue
+    Clear-Variable rfbls -ErrorAction SilentlyContinue
+    Try{
+        $rfbls = Get-HostedContentFilterPolicy Default
+        $rfbls = $rfbls.BlockedSenders | Select-Object -Property Sender | Out-GridView -Passthru -Title "Select Multiple Senders By Holding Ctrl"
+        foreach($rfbl in $rfbls){
+            Set-HostedContentFilterPolicy Default -BlockedSenders @{Remove="$($rfbl.sender)"}
+            Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text  "Removed $($rfbl.Sender) from Sender Blacklist`r"
+        }
+    }
+    Catch{
+        Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text  "$_.Message indicates an error has occurred.  Please review message and retry once resolved." -Color "Red"
+    }
+    Clear-Variable rfbl -ErrorAction SilentlyContinue
+    Clear-Variable rfbls -ErrorAction SilentlyContinue
+})
+
+$SpamFilterRemoveDomainBlacklistButton.Add_Click({
+    Try {
+        Get-Mailbox -ErrorAction Stop | Out-Null
+    }
+    Catch {
+        Connect-ExchangeOnline
+    }
+    Clear-Variable rdfbl -ErrorAction SilentlyContinue
+    Clear-Variable rdfbls -ErrorAction SilentlyContinue
+    Try{
+        $rdfbls = Get-HostedContentFilterPolicy Default
+        $rdfbls = $rdfbls.BlockedSenderDomains | Select-Object -Property Domain | Out-GridView -Passthru -Title "Select Multiple Senders By Holding Ctrl"
+        foreach($rdfbl in $rdfbls){
+            Set-HostedContentFilterPolicy Default -BlockedSenderDomains @{Remove="$($rdfbl.Domain)"}
+            Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text "Removed $($rdfbl.Domain) from Domain Blacklist`r"
+        }
+    }
+    Catch{
+        Write-RichtextBox -TextBox $SpamFilterRichTextBox -Text "$_.Message indicates an error has occurred.  Please review message and retry once resolved."
+    }
+    Clear-Variable rdfbl -ErrorAction SilentlyContinue
+    Clear-Variable rdfbls -ErrorAction SilentlyContinue
+})
+
+### End Spam Filter Tab Functionality
 
 $UserForm.Add_Loaded({
     Try{
