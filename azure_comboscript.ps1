@@ -3,7 +3,7 @@ Add-Type -AssemblyName PresentationFramework
 
 # Test For Modules
 if(-not(Get-Module ExchangeOnlineManagement -ListAvailable)){
-    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement - view http://worksmart.link/7l for details')
+    $null = [System.Windows.MessageBox]::Show('Please Install ExchangeOnlineManagement v2.0.3 - view http://worksmart.link/7l for details')
     Exit
 }
 
